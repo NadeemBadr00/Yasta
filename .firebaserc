@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "ai-roadmap-jnadeem"
+  },
+  "targets": {
+    "nbrain-a654f": {
+      "hosting": {
+        "yasta": [
+          "nbrain-yasta"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

@@ -1,0 +1,86 @@
+<!-- technician/active-job.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <script>var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')};</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا | طلب نشط</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { dark: { bg: '#0f172a', card: '#1e293b' } }, fontFamily: { cairo: ['Cairo', 'sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body { overflow: hidden; } /* منع التمرير لأن الخريطة ملء الشاشة */
+        #map { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; }
+        .bottom-sheet { position: absolute; bottom: 0; left: 0; width: 100%; z-index: 10; border-top-left-radius: 30px; border-top-right-radius: 30px; box-shadow: 0 -10px 40px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-dark-bg relative h-screen">
+
+    <!-- زر رجوع عائم / تنبيه -->
+    <div class="absolute top-6 right-6 z-20 bg-white/90 dark:bg-dark-card/90 backdrop-blur px-4 py-2 rounded-full shadow-lg font-bold flex items-center gap-2 text-red-600">
+        <span class="animate-pulse w-3 h-3 bg-red-600 rounded-full block"></span>
+        طلب جاري
+    </div>
+
+    <!-- زر المحادثة العائم (Chat FAB) -->
+    <a id="chat-fab" href="#" class="absolute top-6 left-6 z-20 w-14 h-14 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-xl shadow-green-500/30 flex items-center justify-center text-2xl transition-all active:scale-90 hover:scale-110" style="animation: bounceIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);">
+        💬
+        <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full border-2 border-white dark:border-dark-bg animate-pulse"></span>
+    </a>
+    <style>
+        @keyframes bounceIn { from { transform: scale(0) rotate(-45deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+    </style>
+    <script>
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            const rid = params.get('requestId');
+            if (rid) {
+                document.getElementById('chat-fab').href = 'chat.html?requestId=' + rid;
+            }
+        })();
+    </script>
+
+    <!-- الخريطة (Full Screen) -->
+    <div id="map"></div>
+
+    <!-- Bottom Sheet (لوحة التحكم العائمة من الأسفل) -->
+    <div class="bottom-sheet bg-white dark:bg-dark-card p-6 slide-up-sheet">
+        
+        <!-- مقبض السحب الوهمي -->
+        <div class="w-12 h-1.5 bg-gray-200 dark:bg-slate-700 rounded-full mx-auto mb-4"></div>
+
+        <!-- تفاصيل العميل -->
+        <div id="job-details" class="mb-5">
+            <div class="text-center py-2 text-gray-500">جاري جلب موقع وبيانات العميل...</div>
+        </div>
+
+        <!-- أزرار الإجراءات السريعة (تظهر وتختفي حسب الحالة) -->
+        <div class="grid grid-cols-2 gap-3 mb-4" id="action-buttons">
+            <button id="btn-on-way" class="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 py-3 rounded-xl font-black transition active:scale-95 hidden">🚗 تحركت للعميل</button>
+            <button id="btn-arrived" class="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 py-3 rounded-xl font-black transition active:scale-95 hidden">📍 وصلت</button>
+            <button id="btn-in-progress" class="col-span-2 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 py-3 rounded-xl font-black transition active:scale-95 hidden">🔧 بدء العمل</button>
+        </div>
+
+        <!-- قسم الفاتورة (يظهر فقط عند بدء العمل) -->
+        <div id="completion-section" class="hidden border-t dark:border-dark-border pt-4">
+            <label class="block text-gray-700 dark:text-gray-300 font-bold mb-2">إجمالي التكلفة (خامات + مصنعية)</label>
+            <div class="flex gap-2">
+                <input type="number" id="final-cost" min="50" class="w-full px-4 py-3 border border-gray-200 dark:border-dark-border rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50 dark:bg-slate-800 dark:text-white font-bold text-lg" placeholder="المبلغ بالجنية (الحد الأدنى 50)">
+                <button id="btn-complete" class="bg-green-600 text-white px-6 rounded-xl font-black hover:bg-green-700 active:scale-95 shadow-md whitespace-nowrap">✅ إنهاء</button>
+            </div>
+            <p class="mt-2 text-xs text-gray-500 dark:text-gray-400 font-bold text-center">
+                ℹ️ الحد الأدنى للمصنعية: 50 ج.م | رسم المعاينة (30 ج.م) مشمول في الإجمالي
+            </p>
+        </div>
+
+    </div>
+
+    <script type="module" src="js/active-job.js"></script>
+    <script type="module" src="../js/shared.js"></script>
+</body>
+</html>

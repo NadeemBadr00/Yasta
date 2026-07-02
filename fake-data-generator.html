@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا | مولد البيانات الوهمية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: { 500: '#3b82f6', 600: '#2563eb' } }, fontFamily: { cairo: ['Cairo', 'sans-serif'] } } } }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+        body { font-family: 'Cairo', sans-serif; }
+        .log-box { font-family: monospace; direction: ltr; text-align: left; }
+    </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-slate-800 p-8 rounded-3xl shadow-2xl w-full max-w-2xl border border-slate-700">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-black text-primary-400 mb-2">🧪 مولد بيانات الاختبار</h1>
+            <p class="text-slate-400 text-sm">أضف بيانات تجريبية (فنيين، عملاء، بوستات، تقييمات) لاختبار التطبيق، وامسحها بضغطة زر.</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <button id="inject-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:scale-105">
+                ➕ توليد بيانات وهمية
+            </button>
+            <button id="clean-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl shadow-lg transition transform hover:scale-105">
+                🗑️ مسح البيانات الوهمية
+            </button>
+        </div>
+
+        <!-- شاشة السجلات (Console) -->
+        <div class="bg-black p-4 rounded-xl h-64 overflow-y-auto log-box text-sm text-green-400 border border-slate-700" id="log-container">
+            > النظام جاهز...
+        </div>
+    </div>
+
+    <!-- Firebase Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, query, where, getDocs, deleteDoc, doc, Timestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // إعدادات فايربيز الخاصة بك
+        const firebaseConfig = {
+            apiKey: "AIzaSyA6WQKgXjdqe3ghQEQ5EXAMZM7ffiWlabk",
+            authDomain: "ai-roadmap-jnadeem.firebaseapp.com",
+            projectId: "ai-roadmap-jnadeem",
+            storageBucket: "ai-roadmap-jnadeem.firebasestorage.app",
+            messagingSenderId: "332299268804",
+            appId: "1:332299268804:web:225b27d243845688194f91"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // واجهة السجلات
+        const logBox = document.getElementById('log-container');
+        function log(msg, type = 'info') {
+            const color = type === 'error' ? 'text-red-500' : type === 'success' ? 'text-green-400' : 'text-blue-300';
+            logBox.innerHTML += `<br><span class="${color}">> ${msg}</span>`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        // دالة توليد توقيت عشوائي في آخر 7 أيام
+        function getRandomDate() {
+            const now = new Date();
+            const randomDaysAgo = Math.floor(Math.random() * 7);
+            const randomHoursAgo = Math.floor(Math.random() * 24);
+            now.setDate(now.getDate() - randomDaysAgo);
+            now.setHours(now.getHours() - randomHoursAgo);
+            return Timestamp.fromDate(now);
+        }
+
+        // ==========================================
+        // 1. حقن البيانات (Inject Data)
+        // ==========================================
+        document.getElementById('inject-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('inject-btn');
+            btn.disabled = true; btn.innerText = "جاري التوليد...";
+            log("بدأ توليد البيانات الوهمية...", "info");
+
+            try {
+                // --- إضافة عملاء ---
+                const customers = [
+                    { name: 'أحمد العميل', phone: '01000000001', role: 'customer', isFakeData: true, createdAt: getRandomDate() },
+                    { name: 'سارة العميل', phone: '01000000002', role: 'customer', isFakeData: true, createdAt: getRandomDate() }
+                ];
+                let custIds = [];
+                for (let c of customers) {
+                    const docRef = await addDoc(collection(db, "users"), c);
+                    custIds.push(docRef.id);
+                }
+                log(`تم إضافة ${custIds.length} عملاء.`, "success");
+
+                // --- إضافة فنيين موثقين ---
+                const techs = [
+                    { name: 'الأسطى سيد (سباك)', phone: '01111111111', role: 'technician', status: 'verified', mainCategory: 'صيانة الأساسيات (الخدمات السريعة)', subCategory: 'سباكة', rating: 4.8, isFakeData: true, createdAt: getRandomDate() },
+                    { name: 'محمود تكييفات', phone: '01111111112', role: 'technician', status: 'verified', mainCategory: 'صيانة الأجهزة المنزلية', subCategory: 'تكييفات', rating: 4.5, isFakeData: true, createdAt: getRandomDate() },
+                    { name: 'كريم الكهربائي', phone: '01111111113', role: 'technician', status: 'verified', mainCategory: 'صيانة الأساسيات (الخدمات السريعة)', subCategory: 'كهرباء', rating: 3.9, isFakeData: true, createdAt: getRandomDate() },
+                    { name: 'عصام نقاش', phone: '01111111114', role: 'technician', status: 'verified', mainCategory: 'التشطيبات والديكور', subCategory: 'نقاشة ودهانات', rating: 5.0, isFakeData: true, createdAt: getRandomDate() }
+                ];
+                let techIds = [];
+                for (let t of techs) {
+                    const docRef = await addDoc(collection(db, "users"), t);
+                    techIds.push({ id: docRef.id, ...t });
+                }
+                log(`تم إضافة ${techIds.length} فنيين موثقين.`, "success");
+
+                // --- إضافة بوستات (تايم لاين) ---
+                const posts = [
+                    { customerId: custIds[0], customerName: customers[0].name, userRole: 'customer', category: 'سباكة', description: 'عندي تسريب جامد في حنفية المطبخ محتاج حد ضروري.', isFakeData: true, createdAt: getRandomDate() },
+                    { customerId: custIds[1], customerName: customers[1].name, userRole: 'customer', category: 'تكييفات', description: 'التكييف بينزل مياه من جوه الغرفة، هل في فني قريب؟', isFakeData: true, createdAt: getRandomDate() },
+                    { customerId: techIds[3].id, customerName: techIds[3].name, userRole: 'technician', category: 'نقاشة ودهانات', description: 'بعمل خصم 20% على دهان الشقق بالكامل بمناسبة العيد، تواصلوا معايا.', isFakeData: true, createdAt: getRandomDate() }
+                ];
+                let postIds = [];
+                for (let p of posts) {
+                    const docRef = await addDoc(collection(db, "posts"), p);
+                    postIds.push(docRef.id);
+                }
+                log(`تم إضافة ${postIds.length} منشورات في المجتمع.`, "success");
+
+                // --- إضافة تعليقات ---
+                await addDoc(collection(db, "comments"), { postId: postIds[0], userId: techIds[0].id, userName: techIds[0].name, userRole: 'technician', text: 'انا سباك وقريب منك، نص ساعة وأكون عندك.', isFakeData: true, createdAt: getRandomDate() });
+                await addDoc(collection(db, "comments"), { postId: postIds[1], userId: techIds[1].id, userName: techIds[1].name, userRole: 'technician', text: 'دي مشكلة سدد في الخرطوم، تكلفتها 150 جنيه.', isFakeData: true, createdAt: getRandomDate() });
+                log(`تم إضافة التعليقات.`, "success");
+
+                // --- إضافة تقييمات للفنيين (لتظهر في دليل الفنيين) ---
+                await addDoc(collection(db, "reviews"), { technicianId: techIds[0].id, customerId: custIds[0], rating: 5, comment: 'شغله ممتاز وسريع', isFakeData: true, createdAt: getRandomDate() });
+                await addDoc(collection(db, "reviews"), { technicianId: techIds[1].id, customerId: custIds[1], rating: 4, comment: 'محترم جدا لكن اتأخر ربع ساعة', isFakeData: true, createdAt: getRandomDate() });
+                log(`تم إضافة التقييمات.`, "success");
+
+                // --- إضافة طلبات سابقة مكتملة (لإحصائيات الإدارة والمحفظة) ---
+                const requests = [
+                    { customerId: custIds[0], technicianId: techIds[0].id, category: 'سباكة', cost: 200, status: 'completed', isFakeData: true, createdAt: getRandomDate() },
+                    { customerId: custIds[1], technicianId: techIds[1].id, category: 'تكييفات', cost: 500, status: 'paid_and_rated', isFakeData: true, createdAt: getRandomDate() },
+                    { customerId: custIds[0], technicianId: techIds[2].id, category: 'كهرباء', cost: 150, status: 'completed', isFakeData: true, createdAt: getRandomDate() }
+                ];
+                for (let r of requests) {
+                    await addDoc(collection(db, "requests"), r);
+                }
+                log(`تم إضافة 3 طلبات مكتملة للمحفظة والإدارة.`, "success");
+
+                log("✅ اكتمل توليد جميع البيانات! افتح التطبيق الآن وجربه.", "success");
+
+            } catch (error) {
+                log(`❌ حدث خطأ: ${error.message}`, "error");
+            } finally {
+                btn.disabled = false; btn.innerText = "➕ توليد بيانات وهمية";
+            }
+        });
+
+        // ==========================================
+        // 2. مسح البيانات (Clean Up)
+        // ==========================================
+        document.getElementById('clean-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('clean-btn');
+            btn.disabled = true; btn.innerText = "جاري المسح...";
+            log("بدأ البحث عن البيانات الوهمية ومسحها...", "info");
+
+            const collectionsToClean = ['users', 'posts', 'comments', 'reviews', 'requests'];
+            let totalDeleted = 0;
+
+            try {
+                for (let collName of collectionsToClean) {
+                    const q = query(collection(db, collName), where("isFakeData", "==", true));
+                    const snapshot = await getDocs(q);
+                    
+                    let deletedInColl = 0;
+                    snapshot.forEach(async (document) => {
+                        await deleteDoc(doc(db, collName, document.id));
+                        deletedInColl++;
+                        totalDeleted++;
+                    });
+                    
+                    if(deletedInColl > 0) log(`تم مسح ${deletedInColl} من ${collName}`);
+                }
+
+                // نعطي مهلة ثانية لانتهاء الـ Promises
+                setTimeout(() => {
+                    log(`✅ تم تنظيف قاعدة البيانات بالكامل. إجمالي المحذوفات: ${totalDeleted}`, "success");
+                    btn.disabled = false; btn.innerText = "🗑️ مسح البيانات الوهمية";
+                }, 1000);
+
+            } catch (error) {
+                log(`❌ حدث خطأ أثناء المسح: ${error.message}`, "error");
+                btn.disabled = false; btn.innerText = "🗑️ مسح البيانات الوهمية";
+            }
+        });
+    </script>
+</body>
+</html>

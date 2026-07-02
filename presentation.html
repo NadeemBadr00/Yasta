@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>يسطا - Yasta | عرض تقديمي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --navy-dark: #0a0e27;
+    --navy: #0f1538;
+    --navy-light: #1a2150;
+    --accent: #4f8cff;
+    --accent-glow: #6fa3ff;
+    --accent2: #00d4aa;
+    --accent3: #ff6b6b;
+    --gold: #ffc857;
+    --text: #e8edf5;
+    --text-dim: #8892b0;
+    --glass: rgba(255, 255, 255, 0.05);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --gradient-1: linear-gradient(135deg, #0a0e27 0%, #1a1a5e 50%, #0f1538 100%);
+    --gradient-accent: linear-gradient(135deg, #4f8cff, #00d4aa);
+    --gradient-warm: linear-gradient(135deg, #ff6b6b, #ffc857);
+  }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--navy-dark);
+    color: var(--text);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    cursor: default;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── SLIDE CONTAINER ─── */
+  .presentation { position: relative; width: 100vw; height: 100vh; }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 80px;
+    opacity: 0;
+    transform: translateX(-60px) scale(0.97);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    background: var(--gradient-1);
+    overflow: hidden;
+  }
+
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    pointer-events: all;
+  }
+
+  .slide.exit-left {
+    opacity: 0;
+    transform: translateX(60px) scale(0.97);
+  }
+
+  /* ─── BACKGROUND EFFECTS ─── */
+  .slide::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(79, 140, 255, 0.08) 0%, transparent 70%);
+    top: -200px; left: -200px;
+    border-radius: 50%;
+    animation: floatOrb 15s ease-in-out infinite;
+  }
+
+  .slide::after {
+    content: '';
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(0, 212, 170, 0.06) 0%, transparent 70%);
+    bottom: -200px; right: -200px;
+    border-radius: 50%;
+    animation: floatOrb 18s ease-in-out infinite reverse;
+  }
+
+  @keyframes floatOrb {
+    0%, 100% { transform: translate(0, 0); }
+    33% { transform: translate(30px, -30px); }
+    66% { transform: translate(-20px, 20px); }
+  }
+
+  /* Grid pattern overlay */
+  .grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(79, 140, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79, 140, 255, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  /* ─── TYPOGRAPHY ─── */
+  .slide-content { position: relative; z-index: 2; width: 100%; max-width: 1100px; text-align: center; }
+
+  .slide-title {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 40px;
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+    line-height: 1.3;
+    text-shadow: none;
+  }
+
+  .slide-subtitle {
+    font-size: 1.4rem;
+    color: var(--text-dim);
+    margin-bottom: 30px;
+    font-weight: 400;
+  }
+
+  /* ─── BULLET POINTS ─── */
+  .bullets {
+    list-style: none;
+    text-align: right;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .bullets li {
+    font-size: 1.35rem;
+    padding: 14px 24px;
+    margin: 8px 0;
+    border-radius: 14px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  .bullets li:hover {
+    background: rgba(79, 140, 255, 0.1);
+    border-color: rgba(79, 140, 255, 0.3);
+    transform: translateX(-8px);
+  }
+
+  .bullets li:nth-child(1) { animation-delay: 0.1s; }
+  .bullets li:nth-child(2) { animation-delay: 0.2s; }
+  .bullets li:nth-child(3) { animation-delay: 0.25s; }
+  .bullets li:nth-child(4) { animation-delay: 0.3s; }
+  .bullets li:nth-child(5) { animation-delay: 0.35s; }
+  .bullets li:nth-child(6) { animation-delay: 0.4s; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── CARDS ─── */
+  .cards { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin-top: 10px; }
+
+  .card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    padding: 28px 24px;
+    min-width: 200px;
+    flex: 1;
+    max-width: 240px;
+    backdrop-filter: blur(12px);
+    transition: all 0.4s ease;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    border-color: var(--accent);
+    box-shadow: 0 20px 60px rgba(79, 140, 255, 0.15);
+  }
+
+  .card-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: var(--accent-glow); }
+  .card-desc { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; }
+
+  .card:nth-child(1) { animation-delay: 0.1s; }
+  .card:nth-child(2) { animation-delay: 0.2s; }
+  .card:nth-child(3) { animation-delay: 0.3s; }
+  .card:nth-child(4) { animation-delay: 0.4s; }
+  .card:nth-child(5) { animation-delay: 0.5s; }
+
+  /* ─── FLOW / STEPS ─── */
+  .flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 30px;
+  }
+
+  .flow-step {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    padding: 30px 28px;
+    text-align: center;
+    min-width: 180px;
+    backdrop-filter: blur(12px);
+    transition: all 0.4s ease;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  .flow-step:hover {
+    transform: translateY(-6px) scale(1.03);
+    border-color: var(--accent2);
+    box-shadow: 0 15px 40px rgba(0, 212, 170, 0.15);
+  }
+
+  .flow-step .step-num {
+    width: 44px; height: 44px;
+    background: var(--gradient-accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+    margin: 0 auto 12px;
+    color: #fff;
+  }
+
+  .flow-step .step-icon { font-size: 2.2rem; margin-bottom: 8px; }
+  .flow-step .step-label { font-size: 1.1rem; font-weight: 700; }
+
+  .flow-arrow { font-size: 2rem; color: var(--accent); animation: pulseArrow 1.5s ease-in-out infinite; }
+
+  @keyframes pulseArrow { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+  .flow-step:nth-child(1) { animation-delay: 0.1s; }
+  .flow-step:nth-child(3) { animation-delay: 0.3s; }
+  .flow-step:nth-child(5) { animation-delay: 0.5s; }
+  .flow-step:nth-child(7) { animation-delay: 0.7s; }
+
+  /* ─── TECH GRID ─── */
+  .tech-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .tech-item {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 24px 20px;
+    width: 130px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    transition: all 0.4s ease;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  .tech-item:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent);
+    box-shadow: 0 12px 40px rgba(79, 140, 255, 0.2);
+  }
+
+  .tech-item .tech-icon { font-size: 2.6rem; margin-bottom: 8px; }
+  .tech-item .tech-name { font-size: 0.9rem; font-weight: 700; color: var(--accent-glow); }
+
+  .tech-item:nth-child(1) { animation-delay: 0.05s; }
+  .tech-item:nth-child(2) { animation-delay: 0.1s; }
+  .tech-item:nth-child(3) { animation-delay: 0.15s; }
+  .tech-item:nth-child(4) { animation-delay: 0.2s; }
+  .tech-item:nth-child(5) { animation-delay: 0.25s; }
+  .tech-item:nth-child(6) { animation-delay: 0.3s; }
+  .tech-item:nth-child(7) { animation-delay: 0.35s; }
+
+  /* ─── ARCHITECTURE DIAGRAM ─── */
+  .arch-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+
+  .arch-box {
+    background: var(--glass);
+    border: 2px solid var(--glass-border);
+    border-radius: 18px;
+    padding: 30px 28px;
+    text-align: center;
+    min-width: 170px;
+    backdrop-filter: blur(12px);
+    transition: all 0.4s ease;
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+  }
+
+  .arch-box:hover { border-color: var(--accent); transform: scale(1.05); }
+  .arch-box .arch-icon { font-size: 2.8rem; margin-bottom: 10px; }
+  .arch-box .arch-label { font-size: 1rem; font-weight: 700; color: var(--accent-glow); }
+  .arch-box .arch-sub { font-size: 0.8rem; color: var(--text-dim); margin-top: 4px; }
+
+  .arch-connector {
+    width: 60px;
+    height: 3px;
+    background: var(--gradient-accent);
+    position: relative;
+    margin: 0 -2px;
+  }
+
+  .arch-connector::after {
+    content: '◀';
+    position: absolute;
+    right: -8px;
+    top: -10px;
+    color: var(--accent);
+    font-size: 1rem;
+  }
+
+  .arch-box:nth-child(1) { animation-delay: 0.1s; }
+  .arch-box:nth-child(3) { animation-delay: 0.3s; }
+  .arch-box:nth-child(5) { animation-delay: 0.5s; }
+  .arch-box:nth-child(7) { animation-delay: 0.7s; }
+
+  /* ─── STATS ─── */
+  .stats-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .stat-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px 24px;
+    min-width: 180px;
+    flex: 1;
+    max-width: 200px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    transition: all 0.4s ease;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  .stat-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--gold);
+    box-shadow: 0 15px 50px rgba(255, 200, 87, 0.1);
+  }
+
+  .stat-number {
+    font-size: 2.8rem;
+    font-weight: 900;
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-label { font-size: 1rem; color: var(--text-dim); margin-top: 4px; font-weight: 600; }
+  .stat-icon { font-size: 1.8rem; margin-bottom: 8px; }
+
+  .stat-card:nth-child(1) { animation-delay: 0.1s; }
+  .stat-card:nth-child(2) { animation-delay: 0.2s; }
+  .stat-card:nth-child(3) { animation-delay: 0.3s; }
+  .stat-card:nth-child(4) { animation-delay: 0.4s; }
+  .stat-card:nth-child(5) { animation-delay: 0.5s; }
+
+  /* ─── UI PAGES SHOWCASE ─── */
+  .pages-grid {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .page-card {
+    background: linear-gradient(135deg, rgba(79, 140, 255, 0.08), rgba(0, 212, 170, 0.05));
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 20px 18px;
+    width: 180px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    transition: all 0.4s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: var(--text);
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  .page-card:hover {
+    transform: translateY(-6px) scale(1.04);
+    border-color: var(--accent);
+    box-shadow: 0 15px 40px rgba(79, 140, 255, 0.2);
+  }
+
+  .page-card .page-icon { font-size: 2.2rem; margin-bottom: 8px; }
+  .page-card .page-name { font-size: 0.95rem; font-weight: 700; color: var(--accent-glow); }
+
+  .page-card:nth-child(1) { animation-delay: 0.05s; }
+  .page-card:nth-child(2) { animation-delay: 0.1s; }
+  .page-card:nth-child(3) { animation-delay: 0.15s; }
+  .page-card:nth-child(4) { animation-delay: 0.2s; }
+  .page-card:nth-child(5) { animation-delay: 0.25s; }
+  .page-card:nth-child(6) { animation-delay: 0.3s; }
+
+  /* ─── LOGO ─── */
+  .logo-main {
+    font-size: 5rem;
+    font-weight: 900;
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+    animation: logoGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes logoGlow {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.3); }
+  }
+
+  .logo-en {
+    font-size: 1.6rem;
+    color: var(--text-dim);
+    font-weight: 300;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .tagline {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 12px;
+    text-shadow: 0 0 30px rgba(255, 200, 87, 0.3);
+  }
+
+  .sub-tagline {
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    margin-bottom: 30px;
+  }
+
+  .meta-info {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-size: 1rem;
+    color: var(--text-dim);
+    backdrop-filter: blur(10px);
+  }
+
+  /* ─── TITLE DECORATIONS ─── */
+  .yasta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 50px;
+    padding: 8px 24px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+    color: var(--accent-glow);
+    backdrop-filter: blur(10px);
+  }
+
+  .yasta-badge::before { content: '🏠'; }
+
+  /* ─── PROGRESS BAR ─── */
+  .progress-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    background: var(--gradient-accent);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+    box-shadow: 0 0 20px rgba(79, 140, 255, 0.5);
+  }
+
+  /* ─── SLIDE COUNTER ─── */
+  .slide-counter {
+    position: fixed;
+    bottom: 20px;
+    left: 30px;
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    z-index: 100;
+    font-weight: 600;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 6px 16px;
+    backdrop-filter: blur(10px);
+  }
+
+  /* ─── CONTROLS ─── */
+  .controls {
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    display: flex;
+    gap: 10px;
+    z-index: 100;
+  }
+
+  .control-btn {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .control-btn:hover {
+    background: rgba(79, 140, 255, 0.2);
+    border-color: var(--accent);
+    transform: scale(1.1);
+  }
+
+  /* ─── THANK YOU SLIDE SPECIAL ─── */
+  .thank-you-text {
+    font-size: 3.5rem;
+    font-weight: 900;
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+  }
+
+  .demo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gradient-accent);
+    color: #fff;
+    text-decoration: none;
+    padding: 16px 40px;
+    border-radius: 14px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-top: 20px;
+    transition: all 0.4s ease;
+    box-shadow: 0 10px 40px rgba(79, 140, 255, 0.3);
+  }
+
+  .demo-link:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 20px 60px rgba(79, 140, 255, 0.4);
+  }
+
+  /* ─── HIGHLIGHT BOXES ─── */
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(79, 140, 255, 0.1), rgba(0, 212, 170, 0.05));
+    border: 1px solid rgba(79, 140, 255, 0.2);
+    border-radius: 16px;
+    padding: 20px 28px;
+    margin: 15px auto;
+    max-width: 700px;
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+
+  /* ─── ANIMATED PARTICLES ─── */
+  .particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFloat linear infinite;
+  }
+
+  @keyframes particleFloat {
+    0% { opacity: 0; transform: translateY(100vh) scale(0); }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+  }
+
+  /* ─── KEYBOARD HINT ─── */
+  .keyboard-hint {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 8px 20px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    z-index: 100;
+    backdrop-filter: blur(10px);
+    opacity: 0.7;
+    transition: opacity 0.3s;
+  }
+
+  .keyboard-hint:hover { opacity: 1; }
+
+  /* ─── SLIDE-SPECIFIC: AI SECTION ─── */
+  .ai-features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .ai-feat {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: right;
+    backdrop-filter: blur(12px);
+    transition: all 0.4s ease;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  .ai-feat:hover {
+    border-color: var(--accent2);
+    transform: translateY(-4px);
+  }
+
+  .ai-feat-icon { font-size: 1.8rem; margin-bottom: 6px; }
+  .ai-feat-title { font-size: 1.05rem; font-weight: 700; color: var(--accent-glow); }
+  .ai-feat-desc { font-size: 0.85rem; color: var(--text-dim); margin-top: 4px; }
+
+  .ai-feat:nth-child(1) { animation-delay: 0.1s; }
+  .ai-feat:nth-child(2) { animation-delay: 0.2s; }
+  .ai-feat:nth-child(3) { animation-delay: 0.3s; }
+  .ai-feat:nth-child(4) { animation-delay: 0.4s; }
+
+  /* ─── SECURITY GRID ─── */
+  .security-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .sec-item {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    transition: all 0.4s ease;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  .sec-item:hover {
+    border-color: var(--accent3);
+    transform: translateY(-4px);
+  }
+
+  .sec-item .sec-icon { font-size: 2rem; margin-bottom: 8px; }
+  .sec-item .sec-title { font-size: 1rem; font-weight: 700; color: var(--accent-glow); }
+  .sec-item .sec-desc { font-size: 0.8rem; color: var(--text-dim); margin-top: 4px; }
+
+  .sec-item:nth-child(1) { animation-delay: 0.1s; }
+  .sec-item:nth-child(2) { animation-delay: 0.2s; }
+  .sec-item:nth-child(3) { animation-delay: 0.3s; }
+  .sec-item:nth-child(4) { animation-delay: 0.4s; }
+
+  /* ─── ADMIN FEATURES ─── */
+  .admin-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 20px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .admin-feat {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 24px 18px;
+    text-align: center;
+    backdrop-filter: blur(12px);
+    transition: all 0.4s ease;
+    animation: fadeInUp 0.5s ease forwards;
+    opacity: 0;
+  }
+
+  .admin-feat:hover {
+    border-color: var(--gold);
+    transform: translateY(-4px);
+  }
+
+  .admin-feat .admin-icon { font-size: 2rem; margin-bottom: 8px; }
+  .admin-feat .admin-title { font-size: 0.95rem; font-weight: 700; color: var(--gold); }
+  .admin-feat .admin-desc { font-size: 0.8rem; color: var(--text-dim); margin-top: 4px; }
+
+  .admin-feat:nth-child(1) { animation-delay: 0.1s; }
+  .admin-feat:nth-child(2) { animation-delay: 0.2s; }
+  .admin-feat:nth-child(3) { animation-delay: 0.3s; }
+
+  /* ─── QR PLACEHOLDER ─── */
+  .qr-box {
+    width: 140px;
+    height: 140px;
+    background: #fff;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .qr-box::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    background:
+      repeating-conic-gradient(#1a2150 0% 25%, #fff 0% 50%) 0 0 / 14px 14px,
+      repeating-conic-gradient(#1a2150 0% 25%, #fff 0% 50%) 7px 7px / 14px 14px;
+    border-radius: 8px;
+    opacity: 0.7;
+  }
+
+  .qr-box::after {
+    content: 'QR';
+    position: absolute;
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: var(--accent);
+    background: #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+  /* ─── TEAM PLACEHOLDER ─── */
+  .team-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+
+  .team-member {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 14px 22px;
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    backdrop-filter: blur(10px);
+  }
+
+  /* ─── SLIDE NUMBER TAG ─── */
+  .slide-num-tag {
+    position: absolute;
+    top: 24px;
+    right: 30px;
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    opacity: 0.4;
+    font-weight: 700;
+    z-index: 5;
+  }
+
+  /* ─── PRINT STYLES ─── */
+  @media print {
+    .slide { page-break-after: always; position: relative; height: 100vh; opacity: 1 !important; transform: none !important; pointer-events: all !important; }
+    .progress-bar, .slide-counter, .controls, .keyboard-hint, .particles { display: none !important; }
+    body { overflow: visible; }
+    .presentation { height: auto; }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 768px) {
+    .slide { padding: 30px 24px; }
+    .slide-title { font-size: 1.8rem; }
+    .logo-main { font-size: 3rem; }
+    .tagline { font-size: 1.2rem; }
+    .bullets li { font-size: 1rem; padding: 10px 16px; }
+    .cards { gap: 10px; }
+    .card { min-width: 140px; padding: 18px 14px; }
+    .flow { gap: 8px; }
+    .flow-step { min-width: 120px; padding: 18px 14px; }
+    .tech-item { width: 90px; padding: 14px 10px; }
+    .ai-features, .security-grid { grid-template-columns: 1fr; }
+    .admin-grid { grid-template-columns: 1fr 1fr; }
+    .arch-diagram { flex-direction: column; }
+    .arch-connector { width: 3px; height: 40px; }
+    .arch-connector::after { right: -10px; top: 50%; transform: rotate(-90deg); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Particles Background -->
+<div class="particles" id="particles"></div>
+
+<!-- Progress Bar -->
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- Slide Counter -->
+<div class="slide-counter" id="slideCounter">1 / 15</div>
+
+<!-- Keyboard Hint -->
+<div class="keyboard-hint">← → استخدم الأسهم للتنقل &nbsp;|&nbsp; F11 شاشة كاملة</div>
+
+<!-- Controls -->
+<div class="controls">
+  <button class="control-btn" onclick="prevSlide()" title="السابق">→</button>
+  <button class="control-btn" onclick="nextSlide()" title="التالي">←</button>
+  <button class="control-btn" onclick="toggleFullscreen()" title="شاشة كاملة">⛶</button>
+</div>
+
+<!-- PRESENTATION -->
+<div class="presentation">
+
+  <!-- ═══════════ SLIDE 1: TITLE ═══════════ -->
+  <div class="slide active" id="slide-1">
+    <div class="grid-bg"></div>
+    <div class="slide-content">
+      <div style="font-size: 4rem; margin-bottom: 5px;">🏠</div>
+      <div class="logo-main">يسطا</div>
+      <div class="logo-en">Y A S T A</div>
+      <div class="tagline">الصنايعي المضمون لحد باب بيتك</div>
+      <div class="sub-tagline">منصة الخدمات المنزلية الذكية</div>
+      <div class="meta-info">
+        <div class="meta-item">👥 اسم الفريق</div>
+        <div class="meta-item">📅 يوليو 2026</div>
+        <div class="meta-item">🎓 مشروع تخرج</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 2: المشكلة ═══════════ -->
+  <div class="slide" id="slide-2">
+    <div class="grid-bg"></div>
+    <span class="slide-num-tag">02 / 15</span>
+    <div class="slide-content">
+      <div class="yasta-badge">المشكلة التي نحلها</div>
+      <h1 class="slide-title">المشكلة 🚨</h1>
+      <ul class="bullets">
+        <li>🔴 لا يوجد معايير جودة موحدة للخدمات المنزلية</li>
+        <li>🔴 أسعار عشوائية وغير شفافة — العميل دايماً بيتخدع</li>
+        <li>🔴 الاعتماد على التوصيات الشفهية فقط</li>
+        <li>🔴 صعوبة التحقق من هوية الفني وموثوقيته</li>
+        <li>🔴 انعدام الضمان على الخدمات المقدمة</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 3: الحل ═══════════ -->
+  <div class="slide" id="slide-3">
+    <div class="grid-bg"></div>
+    <span class="slide-num-tag">03 / 15</span>
+    <div class="slide-content">
+      <div class="yasta-badge">الحل المبتكر</div>
+      <h1 class="slide-title">الحل — يسطا ✨</h1>
+      <ul class="bullets">
+        <li>✅ منصة ذكية تربط العملاء بالفنيين المحترفين والموثقين</li>
+        <li>✅ تشخيص AI ذكي للأعطال بالصور — وفّر وقتك وفلوسك</li>
+        <li>✅ توثيق بالرقم القومي — كل فني موثق ومضمون</li>
+        <li>✅ ضمان 30 يوم على كل خدمة</li>
+        <li>✅ تتبع GPS حي — اعرف الفني فين في أي لحظة</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 4: التقنيات ═══════════ -->
+  <div class="slide" id="slide-4">
+    <div class="grid-bg"></div>
+    <span class="slide-num-tag">04 / 15</span>
+    <div class="slide-content">
+      <div class="yasta-badge">البنية التحتية</div>
+      <h1 class="slide-title">التقنيات المستخدمة 🛠️</h1>
+      <div class="tech-grid">
+        <div class="tech-item">
+          <div class="tech-icon">🌐</div>
+          <div class="tech-name">HTML5</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-icon">🎨</div>
+          <div class="tech-name">CSS3</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-icon">⚡</div>
+          <div class="tech-name">JavaScript</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-icon">🔥</div>
+          <div class="tech-name">Firebase</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-icon">🤖</div>
+          <div class="tech-name">Gemini AI</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-icon">💨</div>
+          <div class="tech-name">Tailwind</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-icon">☁️</div>
+          <div class="tech-name">Cloudflare</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 5: البنية التقنية ═══════════ -->
+  <div class="slide" id="slide-5">
+    <div class="grid-bg"></div>
+    <span class="slide-num-tag">05 / 15</span>
+    <div class="slide-content">
+      <div class="yasta-badge">الهندسة المعمارية</div>
+      <h1 class="slide-title">البنية التقنية 🏗️</h1>
+      <div class="arch-diagram">
+        <div class="arch-box">
+          <div class="arch-icon">👤</div>
+          <div class="arch-label">المستخدم</div>
+          <div class="arch-sub">عميل / فني / أدمن</div>
+        </div>
+        <div class="arch-connector"></div>
+        <div class="arch-box">
+          <div class="arch-icon">🖥️</div>
+          <div class="arch-label">Frontend</div>
+          <div class="arch-sub">HTML + JS + Tailwind</div>
+        </div>
+        <div class="arch-connector"></div>
+        <div class="arch-box">
+          <div class="arch-icon">🔥</div>
+          <div class="arch-label">Firebase</div>
+          <div class="arch-sub">Auth + Firestore + FCM</div>
+        </div>
+        <div class="arch-connector"></div>
+        <div class="arch-box">
+          <div class="arch-icon">🧠</div>
+          <div class="arch-label">Gemini AI</div>
+          <div class="arch-sub">Vision + Chat + OCR</div>
+        </div>
+      </div>
+      <div class="highlight-box" style="margin-top: 30px; text-align: center; font-size: 0.95rem;">
+        ☁️ Cloudflare CDN &nbsp;→&nbsp; 🔒 HTTPS &nbsp;→&nbsp; 📱 PWA Ready &nbsp;→&nbsp; 🌍 Responsive
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 6: ميزات 1 ═══════════ -->
+  <div class="slide" id="slide-6">
+    <div class="grid-bg"></div>
+    <span class="slide-num-tag">06 / 15</span>
+    <div class="slide-content">
+      <div class="yasta-badge">القدرات الأساسية</div>
+      <h1 class="slide-title">الميزات الأساسية (1) 🚀</h1>
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon">🤖</div>
+          <div class="card-title">تشخيص AI بالصور</div>
+          <div class="card-desc">صوّر العطل والذكاء الاصطناعي هيشخصلك المشكلة ويقترح الحل</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💬</div>
+          <div class="card-title">محادثة مباشرة</div>
+          <div class="card-desc">تواصل مباشر بين العميل والفني مع إشعارات فورية</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📦</div>
+          <div class="card-title">باقات أسعار ثابتة</div>
+          <div class="card-desc">أسعار واضحة ومحددة مسبقاً — مفيش مفاجآت</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">⭐</div>
+          <div class="card-title">نظام مناقصة</div>
+          <div class="card-desc">الفنيين يتنافسوا والعميل يختار الأنسب</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 7: ميزات 2 ═══════════ -->
+  <div class="slide" id="slide-7">
+    <div class="grid-bg"></div>
+    <span class="slide-num-tag">07 / 15</span>
+    <div class="slide-content">
+      <div class="yasta-badge">مزايا إضافية</div>
+      <h1 class="slide-title">الميزات الأساسية (2) 🔥</h1>
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon">🔔</div>
+          <div class="card-title">إشعارات فورية</div>
+          <div class="card-desc">Firebase Cloud Messaging — إشعارات Push لحظية</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">📸</div>
+          <div class="card-title">OCR آلي للبطاقة</div>
+          <div class="card-desc">قراءة بيانات البطاقة الشخصية تلقائياً بالـ AI</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">💳</div>
+          <div class="card-title">دفع متعدد</div>
+          <div class="card-desc">كاش — فودافون كاش — بطاقة ائتمان</div>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔗</div>
+          <div class="card-title">نظام إحالة</div>
+          <div class="card-desc">أحل صحابك واكسب رصيد مجاني</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 8: واجهة المستخدم ═══════════ -->
+  <div class="slide" id="slide-8">
+    <div class="grid-bg"></div>
+    <span class="slide-num-tag">08 / 15</span>
+    <div class="slide-content">
+      <div class="yasta-badge">تجربة المستخدم</div>
+      <h1 class="slide-title">واجهة المستخدم 📱</h1>
+      <div class="pages-grid">
+        <a href="https://yasta.nbra.in/" target="_blank" class="page-card">
+          <div class="page-icon">🏠</div>
+          <div class="page-name">Landing Page</div>
+        </a>
+        <a href="https://yasta.nbra.in/login.html" target="_blank" class="page-card">
+          <div class="page-icon">🔐</div>
+          <div class="page-name">تسجيل الدخول</div>
+        </a>
+        <a href="https://yasta.nbra.in/customer-dashboard.html" target="_blank" class="page-card">
+          <div class="page-icon">📊</div>
+          <div class="page-name">لوحة العميل</div>
+        </a>
+        <a href="https://yasta.nbra.in/request-service.html" target="_blank" class="page-card">
+          <div class="page-icon">🛠️</div>
+          <div class="page-name">طلب خدمة</div>
+        </a>
+        <a href="https://yasta.nbra.in/chat.html" target="_blank" class="page-card">
+          <div class="page-icon">💬</div>
+          <div class="page-name">المحادثات</div>
+        </a>
+        <a href="https://yasta.nbra.in/technician-dashboard.html" target="_blank" class="page-card">
+          <div class="page-icon">🔧</div>
+          <div class="page-name">لوحة الفني</div>
+        </a>
+      </div>
+      <div class="highlight-box" style="margin-top: 24px; text-align: center;">
+        🌐 <strong>Live:</strong> <a href="https://yasta.nbra.in" target="_blank" style="color: var(--accent); text-decoration: none;">yasta.nbra.in</a> &nbsp;—&nbsp; متاح 24/7 على Cloudflare
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 9: رحلة العميل ═══════════ -->
+  <div class="slide" id="slide-9">
+    <div class="grid-bg"></div>
+    <span class="slide-num-tag">09 / 15</span>
+    <div class="slide-content">
+      <div class="yasta-badge">تجربة سلسة</div>
+      <h1 class="slide-title">رحلة العميل 🗺️</h1>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="step-num">1</div>
+          <div class="step-icon">📱</div>
+          <div class="step-label">اطلب خدمة</div>
+        </div>
+        <div class="flow-arrow">←</div>
+        <div class="flow-step">
+          <div class="step-num">2</div>
+          <div class="step-icon">🚗</div>
+          <div class="step-label">يوصلك فني</div>
+        </div>
+        <div class="flow-arrow">←</div>
+        <div class="flow-step">
+          <div class="step-num">3</div>
+          <div class="step-icon">🔧</div>
+          <div class="step-label">ينجز الشغل</div>
+        </div>
+        <div class="flow-arrow">←</div>
+        <div class="flow-step">
+          <div class="step-num">4</div>
+          <div class="step-icon">⭐</div>
+          <div class="step-label">قيّم الخدمة</div>
+        </div>
+      </div>
+      <div class="highlight-box" style="margin-top: 30px; text-align: center;">
+        ⏱️ من الطلب للتنفيذ في <span style="color: var(--accent); font-weight: 800;">أقل من ساعة</span> &nbsp;—&nbsp; 🛡️ ضمان <span style="color: var(--accent2); font-weight: 800;">30 يوم</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 10: رحلة الفني ═══════════ -->
+  <div class="slide" id="slide-10">
+    <div class="grid-bg"></div>
+    <span class="slide-num-tag">10 / 15</span>
+    <div class="slide-content">
+      <div class="yasta-badge">فرصة حقيقية</div>
+      <h1 class="slide-title">رحلة الفني 🔧</h1>
+      <div class="flow">
+        <div class="flow-step">
+          <div class="step-num">1</div>
+          <div class="step-icon">📝</div>
+          <div class="step-label">سجّل حسابك</div>
+        </div>
+        <div class="flow-arrow">←</div>
+        <div class="flow-step">
+          <div class="step-num">2</div>
+          <div class="step-icon">🪪</div>
+          <div class="step-label">وثّق هويتك</div>
+        </div>
+        <div class="flow-arrow">←</div>
+        <div class="flow-step">
+          <div class="step-num">3</div>
+          <div class="step-icon">📋</div>
+          <div class="step-label">استقبل طلبات</div>
+        </div>
+        <div class="flow-arrow">←</div>
+        <div class="flow-step">
+          <div class="step-num">4</div>
+          <div class="step-icon">💰</div>
+          <div class="step-label">اكسب فلوس</div>
+        </div>
+      </div>
+      <div class="highlight-box" style="margin-top: 30px; text-align: center;">
+        🪪 توثيق بالرقم القومي عبر <span style="color: var(--accent); font-weight: 800;">AI OCR</span> &nbsp;—&nbsp; 💸 دخل ثابت ومتزايد
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 11: لوحة الإدارة ═══════════ -->
+  <div class="slide" id="slide-11">
+    <div class="grid-bg"></div>
+    <span class="slide-num-tag">11 / 15</span>
+    <div class="slide-content">
+      <div class="yasta-badge">التحكم الكامل</div>
+      <h1 class="slide-title">لوحة الإدارة 🎛️</h1>
+      <div class="admin-grid">
+        <div class="admin-feat">
+          <div class="admin-icon">📊</div>
+          <div class="admin-title">Enterprise Dashboard</div>
+          <div class="admin-desc">إحصائيات شاملة ومؤشرات أداء حية للمنصة</div>
+        </div>
+        <div class="admin-feat">
+          <div class="admin-icon">🤖</div>
+          <div class="admin-title">AI Verification</div>
+          <div class="admin-desc">تحقق ذكي من هوية الفنيين بالذكاء الاصطناعي</div>
+        </div>
+        <div class="admin-feat">
+          <div class="admin-icon">📈</div>
+          <div class="admin-title">Analytics</div>
+          <div class="admin-desc">تحليلات متقدمة للطلبات والتقييمات والأداء</div>
+        </div>
+      </div>
+      <div class="highlight-box" style="margin-top: 24px; text-align: center;">
+        🔐 صلاحيات متعددة المستويات &nbsp;|&nbsp; 👁️ مراقبة حية &nbsp;|&nbsp; 📋 إدارة المحتوى
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 12: الذكاء الاصطناعي ═══════════ -->
+  <div class="slide" id="slide-12">
+    <div class="grid-bg"></div>
+    <span class="slide-num-tag">12 / 15</span>
+    <div class="slide-content">
+      <div class="yasta-badge">قلب المنصة</div>
+      <h1 class="slide-title">الذكاء الاصطناعي 🧠</h1>
+      <div class="ai-features">
+        <div class="ai-feat">
+          <div class="ai-feat-icon">🔍</div>
+          <div class="ai-feat-title">تشخيص الأعطال بالصور</div>
+          <div class="ai-feat-desc">Gemini 2.5 Flash — تحليل بصري فوري للمشكلة واقتراح الحلول</div>
+        </div>
+        <div class="ai-feat">
+          <div class="ai-feat-icon">🪪</div>
+          <div class="ai-feat-title">قراءة البطاقة (OCR)</div>
+          <div class="ai-feat-desc">استخراج بيانات البطاقة الشخصية تلقائياً للتحقق من الهوية</div>
+        </div>
+        <div class="ai-feat">
+          <div class="ai-feat-icon">💬</div>
+          <div class="ai-feat-title">شاتبوت ذكي</div>
+          <div class="ai-feat-desc">Gemini 2.0 Flash — مساعد ذكي يجاوب على كل الأسئلة 24/7</div>
+        </div>
+        <div class="ai-feat">
+          <div class="ai-feat-icon">🔄</div>
+          <div class="ai-feat-title">API Key Rotation</div>
+          <div class="ai-feat-desc">8 مفاتيح API مع تدوير تلقائي — صفر تعطل</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 13: الأمان ═══════════ -->
+  <div class="slide" id="slide-13">
+    <div class="grid-bg"></div>
+    <span class="slide-num-tag">13 / 15</span>
+    <div class="slide-content">
+      <div class="yasta-badge">أمان متكامل</div>
+      <h1 class="slide-title">الأمان والحماية 🔐</h1>
+      <div class="security-grid">
+        <div class="sec-item">
+          <div class="sec-icon">🔑</div>
+          <div class="sec-title">Firebase Authentication</div>
+          <div class="sec-desc">مصادقة آمنة متعددة الطرق — إيميل + تليفون + Google</div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🛡️</div>
+          <div class="sec-title">Firestore Security Rules</div>
+          <div class="sec-desc">قواعد أمان صارمة على مستوى المستند — كل مستخدم يشوف بياناته بس</div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🪪</div>
+          <div class="sec-title">National ID Verification</div>
+          <div class="sec-desc">تحقق من الهوية بالرقم القومي عبر AI OCR</div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">☁️</div>
+          <div class="sec-title">HTTPS + Cloudflare</div>
+          <div class="sec-desc">تشفير كامل + حماية DDoS + CDN عالمي</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 14: الإحصائيات ═══════════ -->
+  <div class="slide" id="slide-14">
+    <div class="grid-bg"></div>
+    <span class="slide-num-tag">14 / 15</span>
+    <div class="slide-content">
+      <div class="yasta-badge">أرقام مبهرة</div>
+      <h1 class="slide-title">يسطا بالأرقام 📊</h1>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-number">+20</div>
+          <div class="stat-label">ميزة متقدمة</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📁</div>
+          <div class="stat-number">+50</div>
+          <div class="stat-label">ملف برمجي</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📱</div>
+          <div class="stat-number">10</div>
+          <div class="stat-label">صفحات UI</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">👥</div>
+          <div class="stat-number">3</div>
+          <div class="stat-label">أدوار مستخدمين</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🌐</div>
+          <div class="stat-number">Live</div>
+          <div class="stat-label" style="font-size:0.85rem">yasta.nbra.in</div>
+        </div>
+      </div>
+      <div class="highlight-box" style="margin-top: 24px; text-align: center;">
+        👤 عميل &nbsp;—&nbsp; 🔧 فني &nbsp;—&nbsp; 🎛️ أدمن &nbsp;&nbsp;|&nbsp;&nbsp; كل دور بواجهة مخصصة
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ SLIDE 15: شكراً ═══════════ -->
+  <div class="slide" id="slide-15">
+    <div class="grid-bg"></div>
+    <div class="slide-content">
+      <div style="font-size: 4rem; margin-bottom: 10px;">🙏</div>
+      <div class="thank-you-text">شكراً لحسن استماعكم</div>
+      <p style="font-size: 1.2rem; color: var(--text-dim); margin-bottom: 20px;">نتمنى يكون العرض عجبكم — ودا اللينك لو عايزين تجربوا بنفسكم</p>
+      <a href="https://yasta.nbra.in" target="_blank" class="demo-link">
+        🚀 جرّب يسطا الآن — Live Demo
+      </a>
+      <div class="qr-box"></div>
+      <div class="team-row">
+        <div class="team-member">👤 عضو الفريق 1</div>
+        <div class="team-member">👤 عضو الفريق 2</div>
+        <div class="team-member">👤 عضو الفريق 3</div>
+        <div class="team-member">👤 عضو الفريق 4</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ─── SLIDE ENGINE ───
+  const totalSlides = 15;
+  let currentSlide = 1;
+
+  function showSlide(n, direction = 'next') {
+    if (n < 1 || n > totalSlides) return;
+    const current = document.getElementById(`slide-${currentSlide}`);
+    const target = document.getElementById(`slide-${n}`);
+
+    if (direction === 'next') {
+      current.classList.remove('active');
+      current.classList.add('exit-left');
+      setTimeout(() => current.classList.remove('exit-left'), 600);
+    } else {
+      current.classList.remove('active');
+    }
+
+    // Reset animations on the new slide
+    const animatedEls = target.querySelectorAll('.bullets li, .card, .flow-step, .tech-item, .ai-feat, .sec-item, .stat-card, .admin-feat, .page-card');
+    animatedEls.forEach(el => {
+      el.style.animation = 'none';
+      el.offsetHeight; // reflow
+      el.style.animation = '';
+    });
+
+    target.classList.add('active');
+    currentSlide = n;
+
+    // Update progress bar
+    const progress = (currentSlide / totalSlides) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+
+    // Update counter
+    document.getElementById('slideCounter').textContent = `${currentSlide} / ${totalSlides}`;
+  }
+
+  function nextSlide() {
+    if (currentSlide < totalSlides) showSlide(currentSlide + 1, 'next');
+  }
+
+  function prevSlide() {
+    if (currentSlide > 1) showSlide(currentSlide - 1, 'prev');
+  }
+
+  // ─── KEYBOARD NAV ───
+  document.addEventListener('keydown', (e) => {
+    switch(e.key) {
+      case 'ArrowLeft':
+      case 'ArrowDown':
+      case ' ':
+      case 'PageDown':
+        e.preventDefault();
+        nextSlide();
+        break;
+      case 'ArrowRight':
+      case 'ArrowUp':
+      case 'PageUp':
+        e.preventDefault();
+        prevSlide();
+        break;
+      case 'Home':
+        e.preventDefault();
+        showSlide(1, 'prev');
+        break;
+      case 'End':
+        e.preventDefault();
+        showSlide(totalSlides, 'next');
+        break;
+      case 'f':
+      case 'F':
+        toggleFullscreen();
+        break;
+    }
+  });
+
+  // ─── CLICK TO ADVANCE ───
+  document.querySelector('.presentation').addEventListener('click', (e) => {
+    if (e.target.closest('.controls') || e.target.closest('a') || e.target.closest('button')) return;
+    nextSlide();
+  });
+
+  // ─── TOUCH SUPPORT ───
+  let touchStartX = 0;
+  document.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', (e) => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) nextSlide(); // swipe left in RTL = next
+      else prevSlide();
+    }
+  });
+
+  // ─── FULLSCREEN ───
+  function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
+  // ─── PARTICLES ───
+  function createParticles() {
+    const container = document.getElementById('particles');
+    for (let i = 0; i < 30; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDuration = (8 + Math.random() * 12) + 's';
+      particle.style.animationDelay = Math.random() * 10 + 's';
+      particle.style.width = (2 + Math.random() * 3) + 'px';
+      particle.style.height = particle.style.width;
+      const colors = ['var(--accent)', 'var(--accent2)', 'var(--gold)'];
+      particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+      container.appendChild(particle);
+    }
+  }
+
+  createParticles();
+
+  // ─── INITIAL PROGRESS BAR ───
+  document.getElementById('progressBar').style.width = (1 / totalSlides * 100) + '%';
+</script>
+
+</body>
+</html>

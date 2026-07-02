@@ -1,0 +1,253 @@
+<!-- customer/chat.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <script>var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')};</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>يسطا | محادثة مع الفني</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: { 500: '#3b82f6', 600: '#2563eb' }, dark: { bg: '#0f172a', card: '#1e293b', border: '#334155' } }, fontFamily: { cairo: ['Cairo', 'sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        /* ارتفاع الشاشة بالكامل بدون التمرير */
+        html, body { height: 100%; overflow: hidden; }
+
+        /* أنيميشن ظهور الفقاعة */
+        .chat-bubble-anim {
+            animation: bubbleIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes bubbleIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* تأثير كتابة */
+        .typing-dots span {
+            animation: typingBounce 1.4s infinite ease-in-out;
+            display: inline-block;
+            width: 6px; height: 6px;
+            border-radius: 50%;
+            background: #94a3b8;
+            margin: 0 1.5px;
+        }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-6px); }
+        }
+
+        /* إخفاء scrollbar لتجربة أنظف */
+        #chat-messages::-webkit-scrollbar { width: 4px; }
+        #chat-messages::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.3); border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-dark-bg h-full flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-dark-card border-b border-gray-100 dark:border-dark-border px-4 py-3 flex items-center gap-3 shadow-sm shrink-0 z-10">
+        <a id="back-btn" href="tracking.html" class="w-10 h-10 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-xl hover:bg-gray-200 dark:hover:bg-slate-600 transition active:scale-90">
+            ←
+        </a>
+        <div class="flex items-center gap-3 flex-1 min-w-0">
+            <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center text-xl shrink-0">👷</div>
+            <div class="min-w-0">
+                <h1 class="text-base font-black text-gray-900 dark:text-white truncate" id="chat-title">محادثة مع الفني 💬</h1>
+                <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold" id="chat-subtitle">متصل</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Chat Messages Container -->
+    <div id="chat-messages" class="flex-1 overflow-y-auto px-4 py-4 space-y-1">
+        <!-- رسائل المحادثة ستظهر هنا -->
+        <div class="flex flex-col items-center justify-center h-full opacity-60">
+            <div class="typing-dots mb-3">
+                <span></span><span></span><span></span>
+            </div>
+            <p class="text-gray-400 dark:text-gray-500 font-bold text-sm">جاري تحميل المحادثة...</p>
+        </div>
+    </div>
+
+    <!-- Upload Preview (hidden by default) -->
+    <div id="upload-preview" class="hidden shrink-0 bg-white dark:bg-dark-card border-t border-gray-100 dark:border-dark-border px-4 py-3">
+        <div class="flex items-center gap-3">
+            <img id="preview-img" src="" alt="معاينة" class="w-16 h-16 rounded-xl object-cover border-2 border-blue-500">
+            <div class="flex-1">
+                <p class="text-sm font-bold text-gray-700 dark:text-gray-300">إرسال صورة</p>
+                <p class="text-xs text-gray-400" id="preview-name">filename.jpg</p>
+            </div>
+            <button id="cancel-upload" class="text-red-500 font-bold text-sm hover:text-red-600 transition">إلغاء ✕</button>
+        </div>
+    </div>
+
+    <!-- Bottom Input Bar -->
+    <div class="bg-white dark:bg-dark-card border-t border-gray-100 dark:border-dark-border px-3 py-3 shrink-0 safe-area-bottom">
+        <div class="flex items-end gap-2">
+            <!-- زر إرفاق صورة -->
+            <label for="image-input" class="w-10 h-10 bg-gray-100 dark:bg-slate-700 rounded-full flex items-center justify-center text-lg cursor-pointer hover:bg-gray-200 dark:hover:bg-slate-600 transition active:scale-90 shrink-0">
+                📎
+            </label>
+            <input type="file" id="image-input" accept="image/*" class="hidden">
+
+            <!-- حقل الرسالة -->
+            <div class="flex-1 relative">
+                <textarea id="message-input" rows="1" maxlength="1000"
+                    class="w-full px-4 py-2.5 bg-gray-100 dark:bg-slate-700 border-0 rounded-2xl text-sm font-semibold text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none leading-relaxed"
+                    placeholder="اكتب رسالتك..."
+                    style="max-height: 100px;"></textarea>
+            </div>
+
+            <!-- زر الإرسال -->
+            <button id="send-btn"
+                class="w-10 h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30 transition active:scale-90 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled>
+                <svg class="w-5 h-5 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db } from '../js/firebase-config.js';
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { initChat, sendMessage, sendImageMessage } from '../js/chat.js';
+        import { checkAuthState, showToast } from '../js/shared.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const requestId = urlParams.get('requestId');
+        if (!requestId) window.location.href = 'dashboard.html';
+
+        // تحديث رابط الرجوع
+        document.getElementById('back-btn').href = `tracking.html?requestId=${requestId}`;
+
+        let chatCleanup = null;
+        let selectedFile = null;
+
+        checkAuthState(true, null);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) return;
+
+            // جلب بيانات الطلب
+            const requestDoc = await getDoc(doc(db, 'requests', requestId));
+            if (!requestDoc.exists()) {
+                showToast('الطلب غير موجود', 'error');
+                return;
+            }
+            const request = requestDoc.data();
+
+            // جلب اسم الفني
+            let techName = 'الفني';
+            if (request.technicianId) {
+                const techDoc = await getDoc(doc(db, 'users', request.technicianId));
+                if (techDoc.exists()) {
+                    techName = techDoc.data().name || 'الفني';
+                }
+            }
+            document.getElementById('chat-title').textContent = `${techName} 💬`;
+
+            // جلب اسم المستخدم الحالي
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            const userName = userDoc.exists() ? (userDoc.data().name || 'عميل') : 'عميل';
+
+            // تهيئة المحادثة
+            const result = initChat(requestId, user.uid, userName, 'customer');
+            chatCleanup = result.cleanup;
+        });
+
+        // === أحداث واجهة المستخدم ===
+
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        const imageInput = document.getElementById('image-input');
+        const uploadPreview = document.getElementById('upload-preview');
+        const previewImg = document.getElementById('preview-img');
+        const previewName = document.getElementById('preview-name');
+        const cancelUpload = document.getElementById('cancel-upload');
+
+        // تفعيل/تعطيل زر الإرسال
+        messageInput.addEventListener('input', () => {
+            sendBtn.disabled = !messageInput.value.trim() && !selectedFile;
+            // تكبير حقل النص تلقائياً
+            messageInput.style.height = 'auto';
+            messageInput.style.height = Math.min(messageInput.scrollHeight, 100) + 'px';
+        });
+
+        // إرسال بالضغط على Enter (Shift+Enter لسطر جديد)
+        messageInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
+
+        // زر الإرسال
+        sendBtn.addEventListener('click', handleSend);
+
+        // اختيار صورة
+        imageInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (!file.type.startsWith('image/')) {
+                showToast('يرجى اختيار صورة فقط', 'error');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                showToast('حجم الصورة كبير جداً (الحد 5 ميجا)', 'error');
+                return;
+            }
+            selectedFile = file;
+            previewImg.src = URL.createObjectURL(file);
+            previewName.textContent = file.name;
+            uploadPreview.classList.remove('hidden');
+            sendBtn.disabled = false;
+        });
+
+        // إلغاء الصورة
+        cancelUpload.addEventListener('click', () => {
+            selectedFile = null;
+            imageInput.value = '';
+            uploadPreview.classList.add('hidden');
+            sendBtn.disabled = !messageInput.value.trim();
+        });
+
+        // دالة الإرسال الموحدة
+        async function handleSend() {
+            const text = messageInput.value.trim();
+            if (!text && !selectedFile) return;
+
+            sendBtn.disabled = true;
+
+            try {
+                if (selectedFile) {
+                    await sendImageMessage(selectedFile);
+                    selectedFile = null;
+                    imageInput.value = '';
+                    uploadPreview.classList.add('hidden');
+                }
+                if (text) {
+                    await sendMessage(text);
+                }
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+            } catch (err) {
+                console.error('Send error:', err);
+                showToast('فشل إرسال الرسالة', 'error');
+            }
+
+            sendBtn.disabled = !messageInput.value.trim();
+        }
+
+        // تنظيف عند المغادرة
+        window.addEventListener('beforeunload', () => {
+            if (chatCleanup) chatCleanup();
+        });
+    </script>
+</body>
+</html>

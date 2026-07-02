@@ -1,0 +1,267 @@
+<!-- admin/verify-users.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <script>var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')};</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا | نظام توثيق الفنيين</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: { 50: '#f0f7ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' }, dark: { bg: '#020617', card: '#0f172a', border: '#1e293b', text: '#f8fafc', muted: '#94a3b8' } }, fontFamily: { cairo: ['Cairo', 'sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .glass-header { 
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(12px); 
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+        }
+        .dark .glass-header { 
+            background: rgba(15, 23, 42, 0.8); 
+            border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+        }
+        .sidebar-link-active {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+            border-right: 4px solid #3b82f6;
+            color: #3b82f6 !important;
+        }
+        .premium-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+        .dark .premium-card { border: 1px solid rgba(51, 65, 85, 0.3); }
+        .premium-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+        }
+        .tab-active {
+            background: #3b82f6;
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        .modal-backdrop {
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(8px);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* AI OCR Verification Styles */
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+            50% { box-shadow: 0 0 20px 6px rgba(139, 92, 246, 0.15); }
+        }
+        .ai-btn {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            animation: pulse-glow 2.5s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+        .ai-btn:hover {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 25px -5px rgba(139, 92, 246, 0.5);
+        }
+        .ai-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            animation: none;
+            transform: none;
+        }
+        .ai-spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin-slow 0.8s linear infinite;
+        }
+        .ocr-results-panel {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            animation: fadeSlideIn 0.4s ease-out;
+        }
+        .dark .ocr-results-panel {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.05) 100%);
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .ocr-table td {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+        }
+        .ocr-table td:first-child {
+            color: #8b5cf6;
+            white-space: nowrap;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .match-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 900;
+        }
+        .match-high { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .match-medium { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2); }
+        .match-low { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .accept-highlight {
+            animation: pulse-glow-green 1.5s ease-in-out infinite;
+            transform: scale(1.03);
+        }
+        @keyframes pulse-glow-green {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 0 20px 6px rgba(16, 185, 129, 0.2); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-dark-bg text-slate-800 dark:text-slate-200 min-h-screen flex overflow-hidden">
+
+    <!-- Overlay for Mobile -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 hidden transition-opacity duration-300"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="fixed lg:static z-50 w-72 h-screen bg-white dark:bg-dark-card border-l border-slate-200 dark:border-dark-border flex flex-col shadow-xl lg:shadow-none transition-transform duration-300 translate-x-full lg:translate-x-0">
+        <div class="p-8">
+            <div class="flex items-center gap-3 mb-12">
+                <div class="w-11 h-11 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-500/30 text-white text-xl font-black">ي</div>
+                <div>
+                    <h1 class="text-xl font-black dark:text-white leading-none">يـسـطـا</h1>
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">إدارة المنصة</span>
+                </div>
+            </div>
+
+            <nav class="space-y-2">
+                <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4 px-4">لوحة التحكم</p>
+                <a href="dashboard.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-primary-500 font-bold transition-all">
+                    <span>📊</span> الإحصائيات
+                </a>
+                <a href="live-map.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-primary-500 font-bold transition-all">
+                    <span>🛰️</span> الرادار المباشر
+                </a>
+                <a href="verify-users.html" class="sidebar-link-active flex items-center gap-4 px-4 py-3.5 rounded-2xl font-bold transition-all">
+                    <span>🛡️</span> طلبات التوثيق
+                </a>
+                <a href="categories.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-primary-500 font-bold transition-all">
+                    <span>🧰</span> التخصصات
+                </a>
+                <a href="packages.html" class="flex items-center gap-4 px-4 py-3.5 rounded-2xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-primary-500 font-bold transition-all">
+                    <span>📦</span> الباقات
+                </a>
+            </nav>
+        </div>
+        <div class="mt-auto p-6 border-t dark:border-slate-800">
+            <button id="logout-btn" class="w-full flex items-center justify-center gap-3 px-4 py-3.5 rounded-2xl bg-red-50 dark:bg-red-500/10 text-red-600 font-black hover:bg-red-100 transition-all">
+                تسجيل الخروج
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <!-- Header -->
+        <header class="h-20 glass-header sticky top-0 z-40 px-8 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <button id="mobile-toggle" class="lg:hidden p-2 text-slate-500 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"></path></svg>
+                </button>
+                <h2 class="text-xl font-black text-slate-800 dark:text-white">نظام المراجعة والتوثيق</h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <button id="refresh-btn" class="p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm hover:scale-105 transition-all text-sm font-bold text-slate-600 dark:text-slate-300">
+                    ↻ تحديث
+                </button>
+            </div>
+        </header>
+
+        <!-- Sub Header: Search & Filters -->
+        <div class="bg-white dark:bg-dark-card border-b border-slate-200 dark:border-slate-800 p-6">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 items-center justify-between">
+                <!-- Search -->
+                <div class="relative w-full md:w-96">
+                    <input type="text" id="search-input" placeholder="ابحث باسم الفني أو البريد الإلكتروني..." class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl py-3 pr-11 pl-4 text-sm font-bold focus:ring-2 focus:ring-primary-500 outline-none transition-all">
+                    <span class="absolute right-4 top-3.5 text-slate-400">🔍</span>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex bg-slate-100 dark:bg-slate-900 p-1 rounded-2xl w-full md:w-auto">
+                    <button id="tab-pending" class="flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-black transition-all tab-active">المعلقة</button>
+                    <button id="tab-verified" class="flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-black transition-all text-slate-500">الموثقة</button>
+                    <button id="tab-rejected" class="flex-1 md:flex-none px-6 py-2 rounded-xl text-xs font-black transition-all text-slate-500">المرفوضة</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards Container -->
+        <div id="u-container" class="flex-1 overflow-y-auto p-6 md:p-10 no-scrollbar">
+            <div class="max-w-7xl mx-auto">
+                <!-- Stats Summary -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+                    <div class="bg-white dark:bg-dark-card p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800">
+                        <p class="text-[10px] font-black text-slate-400 uppercase mb-1">بانتظار المراجعة</p>
+                        <h4 id="count-pending" class="text-3xl font-black text-primary-600">0</h4>
+                    </div>
+                    <div class="bg-white dark:bg-dark-card p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800">
+                        <p class="text-[10px] font-black text-slate-400 uppercase mb-1">فنيين موثقين</p>
+                        <h4 id="count-verified" class="text-3xl font-black text-emerald-500">0</h4>
+                    </div>
+                    <div class="bg-white dark:bg-dark-card p-6 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800">
+                        <p class="text-[10px] font-black text-slate-400 uppercase mb-1">طلبات مرفوضة</p>
+                        <h4 id="count-rejected" class="text-3xl font-black text-red-500">0</h4>
+                    </div>
+                </div>
+
+                <!-- Main Grid -->
+                <div id="requests-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-8 pb-20">
+                    <!-- Content loaded dynamically by JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Image Preview -->
+    <div id="image-modal" class="fixed inset-0 z-[100] modal-backdrop flex items-center justify-center p-4 hidden transition-opacity duration-300">
+        <div class="relative max-w-5xl w-full bg-white dark:bg-dark-card rounded-[2.5rem] overflow-hidden shadow-2xl scale-95 transition-transform duration-300" id="modal-content">
+            <button id="modal-close-btn" class="absolute top-6 left-6 z-10 w-12 h-12 bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-full flex items-center justify-center text-white transition-all">✕</button>
+            <img id="modal-image" src="" class="w-full h-auto max-h-[85vh] object-contain bg-slate-900" alt="Preview">
+            <div class="p-6 text-center">
+                <p id="modal-title" class="text-lg font-black dark:text-white">معاينة المستند</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/verify-users.js"></script>
+    <script type="module" src="../js/shared.js"></script>
+    <script>
+        // Sidebar toggle for mobile
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        document.getElementById('mobile-toggle')?.addEventListener('click', () => {
+            sidebar.classList.toggle('translate-x-full');
+            overlay.classList.toggle('hidden');
+        });
+
+        document.getElementById('sidebar-overlay')?.addEventListener('click', () => {
+            sidebar.classList.add('translate-x-full');
+            overlay.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>

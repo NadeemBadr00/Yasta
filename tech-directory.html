@@ -1,0 +1,68 @@
+<!-- tech-directory.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا | دليل الفنيين</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: { 500: '#3b82f6', 600: '#2563eb' }, dark: { bg: '#0f172a', card: '#1e293b', border: '#334155', text: '#f8fafc', muted: '#94a3b8' } }, fontFamily: { cairo: ['Cairo', 'sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+
+<script>if(localStorage.getItem('theme')==='dark'||(!('theme' in localStorage)&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}</script>
+</head>
+<body class="bg-gray-50 dark:bg-dark-bg text-gray-900 dark:text-dark-text flex flex-col min-h-screen transition-colors duration-300 pb-24 overflow-x-hidden">
+
+    <!-- Header & Search -->
+    <header class="bg-white dark:bg-dark-card shadow-sm dark:shadow-none dark:border-b dark:border-dark-border pt-4 pb-2 sticky top-0 z-40">
+        <div class="max-w-3xl mx-auto px-4">
+            <div class="flex justify-between items-center mb-3">
+                <h1 class="text-xl font-black text-primary-600 dark:text-primary-400">دليل الصنايعية 🛠️</h1>
+                <button id="open-filter-sidebar" class="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-bold flex items-center gap-1 bg-gray-100 dark:bg-slate-800 px-3 py-1.5 rounded-lg transition">
+                    <span class="text-lg">🎛️</span> تصفية
+                </button>
+            </div>
+            <input type="text" id="search-tech" placeholder="ابحث بالاسم أو التخصص..." class="w-full px-4 py-3 bg-gray-100 dark:bg-slate-800 border-transparent rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 mb-2 font-bold text-sm text-gray-900 dark:text-white">
+        </div>
+    </header>
+
+    <!-- Sidebar Overlay -->
+    <div id="filter-overlay" class="fixed inset-0 bg-black/50 z-40 hidden backdrop-blur-sm transition-opacity"></div>
+
+    <!-- Filter Sidebar -->
+    <aside id="filter-sidebar" class="bg-white dark:bg-dark-card w-72 flex-shrink-0 flex flex-col transition-transform duration-300 transform translate-x-full fixed z-50 h-full right-0 shadow-2xl border-l border-gray-100 dark:border-dark-border top-0">
+        <div class="p-6 border-b border-gray-100 dark:border-dark-border flex justify-between items-center">
+            <h2 class="text-xl font-black text-primary-600 dark:text-primary-400">تصفية بالتخصص</h2>
+            <button id="close-filter-sidebar" class="text-gray-400 text-3xl hover:text-red-500 transition leading-none">&times;</button>
+        </div>
+        <div class="flex-grow overflow-y-auto p-4 space-y-2" id="sidebar-categories">
+            <!-- سيتم الملء بواسطة الجافاسكريبت -->
+            <div class="text-center text-gray-500 text-sm mt-10">جاري تحميل التخصصات...</div>
+        </div>
+        <div class="p-4 border-t border-gray-100 dark:border-dark-border bg-gray-50 dark:bg-slate-800/50">
+            <button id="reset-filters" class="w-full bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-slate-600 py-2.5 rounded-xl font-bold transition">
+                إلغاء التصفية
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-grow p-4 max-w-3xl mx-auto w-full slide-up">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="font-bold text-gray-700 dark:text-gray-300">أفضل الفنيين الموثقين</h2>
+            <select id="sort-select" class="text-xs font-bold bg-white dark:bg-dark-card border dark:border-dark-border px-2 py-1 rounded-lg">
+                <option value="rating">الأعلى تقييماً</option>
+                <option value="new">الأحدث انضماماً</option>
+            </select>
+        </div>
+
+        <div id="techs-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- سيتم الملء من الجافاسكريبت -->
+            <div class="text-center py-10 text-gray-500 font-bold col-span-full">جاري البحث عن الفنيين...</div>
+        </div>
+    </main>
+
+    <script type="module" src="js/tech-directory.js"></script>
+</body>
+</html>

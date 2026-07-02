@@ -1,0 +1,86 @@
+<!-- verify-identity.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <script>var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')};</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا | توثيق الهوية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: { 500: '#3b82f6', 600: '#2563eb' }, dark: { bg: '#0f172a', card: '#1e293b', border: '#334155', text: '#f8fafc', muted: '#94a3b8' } }, fontFamily: { cairo: ['Cairo', 'sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        // دالة لعرض الصورة فور اختيارها
+        function previewImage(event, previewId) {
+            const input = event.target;
+            const previewImage = document.getElementById(previewId);
+            const placeholder = document.getElementById(previewId + '-placeholder');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-dark-bg flex items-center justify-center min-h-screen p-4 transition-colors">
+
+    <div class="bg-white dark:bg-dark-card p-8 rounded-3xl shadow-xl w-full max-w-lg slide-up my-8 border border-gray-100 dark:border-dark-border">
+        <div class="text-center mb-8">
+            <div class="w-16 h-16 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-3 text-3xl">🛡️</div>
+            <h1 class="text-2xl font-black text-gray-800 dark:text-white mb-2">توثيق هوية الفني</h1>
+            <p class="text-gray-500 dark:text-dark-muted text-sm font-bold">لضمان أمان عملائنا، يرجى رفع المستندات التالية.</p>
+        </div>
+
+        <form id="verify-form" class="space-y-5">
+            
+            <!-- صورة البطاقة - الوجه -->
+            <label class="block relative w-full h-40 border-2 border-dashed border-gray-300 dark:border-dark-border rounded-2xl overflow-hidden hover:border-primary-500 dark:hover:border-primary-400 transition cursor-pointer group bg-gray-50 dark:bg-slate-800/50">
+                <input type="file" id="idFront" accept="image/*" required class="hidden" onchange="previewImage(event, 'preview-front')">
+                <div id="preview-front-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
+                    <span class="text-3xl mb-2 opacity-50 group-hover:opacity-100 transition">🪪</span>
+                    <span class="text-gray-700 dark:text-gray-300 font-bold mb-1">صورة البطاقة (الوجه)</span>
+                    <span class="text-xs text-gray-400 dark:text-dark-muted">اضغط لالتقاط أو اختيار صورة</span>
+                </div>
+                <img id="preview-front" class="hidden absolute inset-0 w-full h-full object-cover">
+            </label>
+
+            <!-- صورة البطاقة - الظهر -->
+            <label class="block relative w-full h-40 border-2 border-dashed border-gray-300 dark:border-dark-border rounded-2xl overflow-hidden hover:border-primary-500 transition cursor-pointer group bg-gray-50 dark:bg-slate-800/50">
+                <input type="file" id="idBack" accept="image/*" required class="hidden" onchange="previewImage(event, 'preview-back')">
+                <div id="preview-back-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
+                    <span class="text-3xl mb-2 opacity-50 group-hover:opacity-100 transition">💳</span>
+                    <span class="text-gray-700 dark:text-gray-300 font-bold mb-1">صورة البطاقة (الظهر)</span>
+                    <span class="text-xs text-gray-400">اضغط لالتقاط أو اختيار صورة</span>
+                </div>
+                <img id="preview-back" class="hidden absolute inset-0 w-full h-full object-cover">
+            </label>
+
+            <!-- الفيش والتشبيه -->
+            <label class="block relative w-full h-40 border-2 border-dashed border-gray-300 dark:border-dark-border rounded-2xl overflow-hidden hover:border-primary-500 transition cursor-pointer group bg-gray-50 dark:bg-slate-800/50">
+                <input type="file" id="criminalRecord" accept="image/*" required class="hidden" onchange="previewImage(event, 'preview-criminal')">
+                <div id="preview-criminal-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
+                    <span class="text-3xl mb-2 opacity-50 group-hover:opacity-100 transition">📜</span>
+                    <span class="text-gray-700 dark:text-gray-300 font-bold mb-1">الفيش الجنائي (حديث)</span>
+                    <span class="text-xs text-gray-400">اضغط لالتقاط صورة للفيش</span>
+                </div>
+                <img id="preview-criminal" class="hidden absolute inset-0 w-full h-full object-cover">
+            </label>
+
+            <button type="submit" id="submit-docs-btn" class="w-full bg-green-600 text-white font-black py-4 rounded-xl hover:bg-green-700 transition duration-300 shadow-lg hover:shadow-green-500/30 active:scale-95 mt-4">
+                رفع المستندات وإرسال للمراجعة
+            </button>
+        </form>
+    </div>
+
+    <script type="module" src="js/verify-identity.js"></script>
+    <script type="module" src="js/shared.js"></script>
+</body>
+</html>

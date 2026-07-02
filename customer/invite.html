@@ -1,0 +1,163 @@
+<!-- customer/invite.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <script>var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')};</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا | ادعُ أصدقائك</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb' }, dark: { bg: '#0f172a', card: '#1e293b', border: '#334155', text: '#f8fafc', muted: '#94a3b8' } }, fontFamily: { cairo: ['Cairo', 'sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="bg-gray-50 dark:bg-dark-bg text-gray-900 dark:text-dark-text flex flex-col min-h-screen transition-colors pb-24">
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-dark-card shadow-sm dark:border-b dark:border-dark-border py-4 px-4 sticky top-0 z-40">
+        <div class="max-w-5xl mx-auto flex items-center gap-4">
+            <a href="dashboard.html" class="w-10 h-10 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-xl hover:bg-gray-200 transition">&rarr;</a>
+            <h1 class="text-xl font-black text-primary-600 dark:text-primary-400">ادعُ أصدقائك 🎁</h1>
+        </div>
+    </header>
+
+    <main class="flex-grow p-4 max-w-lg mx-auto w-full slide-up">
+
+        <!-- بطاقة كود الإحالة الرئيسية -->
+        <div class="bg-gradient-to-br from-amber-400 via-orange-500 to-red-500 rounded-3xl p-6 text-white shadow-2xl mt-6 relative overflow-hidden">
+            <!-- زخرفة خلفية -->
+            <div class="absolute top-0 left-0 w-32 h-32 bg-white/10 rounded-full -translate-x-10 -translate-y-10"></div>
+            <div class="absolute bottom-0 right-0 w-24 h-24 bg-white/10 rounded-full translate-x-8 translate-y-8"></div>
+
+            <div class="relative z-10 text-center">
+                <div class="text-5xl mb-3">🎁</div>
+                <h2 class="text-lg font-bold mb-1 opacity-90">كود الإحالة الخاص بك</h2>
+                
+                <div id="referral-code-display" class="bg-white/20 backdrop-blur-sm rounded-2xl px-6 py-4 my-4 border border-white/30">
+                    <span id="user-referral-code" class="text-2xl font-black tracking-widest select-all">جاري التحميل...</span>
+                </div>
+
+                <button id="copy-code-btn" onclick="copyReferralCode()" class="bg-white text-orange-600 font-bold px-8 py-3 rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all duration-200 text-sm">
+                    نسخ الكود 📋
+                </button>
+            </div>
+        </div>
+
+        <!-- شرح البرنامج -->
+        <div class="bg-white dark:bg-dark-card rounded-2xl p-5 mt-5 shadow-sm border border-gray-100 dark:border-dark-border">
+            <h3 class="font-black text-gray-800 dark:text-white mb-3 text-base">كيف يعمل برنامج الإحالة؟ 🤔</h3>
+            <div class="space-y-3">
+                <div class="flex items-start gap-3">
+                    <span class="bg-amber-100 dark:bg-amber-900/30 w-9 h-9 rounded-full flex items-center justify-center text-lg flex-shrink-0">1️⃣</span>
+                    <p class="text-gray-600 dark:text-dark-muted text-sm font-bold leading-relaxed">شارك الكود الخاص بك مع أصدقائك</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="bg-amber-100 dark:bg-amber-900/30 w-9 h-9 rounded-full flex items-center justify-center text-lg flex-shrink-0">2️⃣</span>
+                    <p class="text-gray-600 dark:text-dark-muted text-sm font-bold leading-relaxed">صديقك يسجل ويدخل الكود عند إنشاء الحساب</p>
+                </div>
+                <div class="flex items-start gap-3">
+                    <span class="bg-amber-100 dark:bg-amber-900/30 w-9 h-9 rounded-full flex items-center justify-center text-lg flex-shrink-0">3️⃣</span>
+                    <p class="text-gray-600 dark:text-dark-muted text-sm font-bold leading-relaxed">أنت تحصل على <span class="text-amber-600 dark:text-amber-400 font-black">20 جنيه</span> رصيد، وصديقك يحصل على <span class="text-amber-600 dark:text-amber-400 font-black">خصم 15%</span> على أول طلب!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- إحصائيات الإحالات -->
+        <div class="grid grid-cols-2 gap-4 mt-5">
+            <div class="bg-white dark:bg-dark-card rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-dark-border text-center">
+                <div class="text-3xl mb-2">👥</div>
+                <div id="referral-count" class="text-2xl font-black text-primary-600 dark:text-primary-400">0</div>
+                <p class="text-gray-500 dark:text-dark-muted text-xs font-bold mt-1">إحالات ناجحة</p>
+            </div>
+            <div class="bg-white dark:bg-dark-card rounded-2xl p-5 shadow-sm border border-gray-100 dark:border-dark-border text-center">
+                <div class="text-3xl mb-2">💰</div>
+                <div id="wallet-earned" class="text-2xl font-black text-green-600 dark:text-green-400">0 ج.م</div>
+                <p class="text-gray-500 dark:text-dark-muted text-xs font-bold mt-1">الرصيد المكتسب</p>
+            </div>
+        </div>
+
+        <!-- مشاركة مباشرة -->
+        <div class="bg-white dark:bg-dark-card rounded-2xl p-5 mt-5 shadow-sm border border-gray-100 dark:border-dark-border text-center">
+            <p class="text-gray-700 dark:text-gray-300 font-bold text-sm mb-3">شارك الكود مع أصدقائك واحصل على 20 جنيه رصيد لكل صديق يسجل!</p>
+            <button onclick="shareReferral()" class="bg-green-500 hover:bg-green-600 text-white font-bold px-6 py-3 rounded-xl shadow-md active:scale-95 transition-all duration-200 text-sm w-full">
+                مشاركة عبر واتساب 💬
+            </button>
+        </div>
+
+    </main>
+
+    <script type="module">
+        import { auth, db } from '../js/firebase-config.js';
+        import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { showToast, injectBottomNav } from '../js/shared.js';
+
+        injectBottomNav('customer', '');
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                window.location.href = '../login.html';
+                return;
+            }
+
+            try {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    document.getElementById('user-referral-code').textContent = data.referralCode || 'غير متوفر';
+                    document.getElementById('referral-count').textContent = data.referralCount || 0;
+                    document.getElementById('wallet-earned').textContent = `${data.walletBalance || 0} ج.م`;
+
+                    // حفظ الكود في window لاستخدامه في دوال النسخ والمشاركة
+                    window._referralCode = data.referralCode || '';
+                } else {
+                    showToast('لم يتم العثور على بيانات المستخدم', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+                showToast('حدث خطأ في تحميل البيانات', 'error');
+            }
+        });
+    </script>
+
+    <script>
+        function copyReferralCode() {
+            const code = document.getElementById('user-referral-code').textContent;
+            if (!code || code === 'جاري التحميل...' || code === 'غير متوفر') return;
+
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = document.getElementById('copy-code-btn');
+                btn.textContent = 'تم النسخ! ✅';
+                btn.classList.add('bg-green-100', 'text-green-700');
+                setTimeout(() => {
+                    btn.textContent = 'نسخ الكود 📋';
+                    btn.classList.remove('bg-green-100', 'text-green-700');
+                }, 2000);
+            }).catch(() => {
+                // fallback للمتصفحات القديمة
+                const textarea = document.createElement('textarea');
+                textarea.value = code;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                
+                const btn = document.getElementById('copy-code-btn');
+                btn.textContent = 'تم النسخ! ✅';
+                setTimeout(() => { btn.textContent = 'نسخ الكود 📋'; }, 2000);
+            });
+        }
+
+        function shareReferral() {
+            const code = window._referralCode || document.getElementById('user-referral-code').textContent;
+            if (!code || code === 'جاري التحميل...' || code === 'غير متوفر') return;
+
+            const message = `🎁 سجل في تطبيق يسطا واستخدم كود الإحالة الخاص بي: ${code}\nستحصل على خصم 15% على أول طلب!\n\nحمّل التطبيق الآن 🚀`;
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,491 @@
+/* css/style.css */
+
+/* استيراد خط Cairo */
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+
+/* تطبيق الخط على كامل المشروع */
+body {
+    font-family: 'Cairo', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #1e293b; /* slate-800 default text for light mode */
+    background-color: #f8fafc; /* slate-50 light bg */
+}
+
+/* ===== Light Mode Overrides (إصلاح الألوان في الوضع الفاتح) ===== */
+html:not(.dark) body {
+    color: #1e293b;
+    background-color: #f8fafc;
+}
+
+html:not(.dark) h1, html:not(.dark) h2, html:not(.dark) h3, html:not(.dark) h4 {
+    color: #0f172a;
+}
+
+html:not(.dark) p, html:not(.dark) span, html:not(.dark) li, html:not(.dark) label {
+    color: #334155;
+}
+
+html:not(.dark) a:not([class*="bg-"]):not([class*="btn"]) {
+    color: #2563eb;
+}
+
+/* Dark mode body */
+html.dark body {
+    color: #e2e8f0;
+    background-color: #0f172a;
+}
+
+/* =========================================
+   Custom Scrollbar (شريط التمرير الاحترافي)
+========================================= */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+.dark ::-webkit-scrollbar-track { background: #0f172a; }
+.dark ::-webkit-scrollbar-thumb { background: #334155; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+/* =========================================
+   Base Animations & Bottom Sheets
+========================================= */
+.fade-in { animation: fadeIn 0.3s ease-in-out; }
+.slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+
+/* حركة النوافذ من الأسفل للموبايل */
+.slide-up-sheet { animation: slideUpSheet 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes slideUpSheet { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+/* =========================================
+   Skeleton Loaders (التحميل الهيكلي)
+========================================= */
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+.skeleton {
+    background: #e2e8f0;
+    background-image: linear-gradient(90deg, #e2e8f0 0px, #f1f5f9 40px, #e2e8f0 80px);
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite linear;
+}
+
+.dark .skeleton {
+    background: #1e293b;
+    background-image: linear-gradient(90deg, #1e293b 0px, #334155 40px, #1e293b 80px);
+}
+
+
+/* ═══════════════════════════════════════════
+   LANDING PAGE — PREMIUM STYLES
+═══════════════════════════════════════════ */
+
+/* =========================================
+   Hero Gradient Background
+========================================= */
+.hero-gradient {
+    background: linear-gradient(135deg, #020617 0%, #0f172a 25%, #1e3a5f 50%, #0f172a 75%, #020617 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    25% { background-position: 100% 0%; }
+    50% { background-position: 100% 100%; }
+    75% { background-position: 0% 100%; }
+}
+
+/* =========================================
+   Gradient Text Effect
+========================================= */
+.hero-gradient-text {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6, #f59e0b, #fbbf24);
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: textGradient 6s ease infinite;
+}
+
+@keyframes textGradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+/* =========================================
+   Floating Animated Shapes (CSS Only)
+========================================= */
+.floating-shapes {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.06;
+}
+
+.shape-1 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, #3b82f6, transparent 70%);
+    top: -10%;
+    right: -10%;
+    animation: floatShape1 20s ease-in-out infinite;
+}
+
+.shape-2 {
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, #f59e0b, transparent 70%);
+    bottom: -5%;
+    left: -5%;
+    animation: floatShape2 25s ease-in-out infinite;
+}
+
+.shape-3 {
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, #8b5cf6, transparent 70%);
+    top: 40%;
+    left: 15%;
+    animation: floatShape3 18s ease-in-out infinite;
+}
+
+.shape-4 {
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, #10b981, transparent 70%);
+    top: 20%;
+    right: 20%;
+    animation: floatShape4 22s ease-in-out infinite;
+}
+
+.shape-5 {
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, #f43f5e, transparent 70%);
+    bottom: 30%;
+    right: 10%;
+    animation: floatShape5 16s ease-in-out infinite;
+}
+
+.shape-6 {
+    width: 250px;
+    height: 250px;
+    background: radial-gradient(circle, #06b6d4, transparent 70%);
+    top: 60%;
+    left: 50%;
+    animation: floatShape6 28s ease-in-out infinite;
+}
+
+.shape-7 {
+    width: 80px;
+    height: 80px;
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    top: 15%;
+    left: 40%;
+    opacity: 0.04;
+    animation: floatShape7 14s ease-in-out infinite, morphShape 10s ease-in-out infinite;
+}
+
+@keyframes floatShape1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(-40px, 30px) scale(1.1); }
+    66% { transform: translate(20px, -20px) scale(0.95); }
+}
+
+@keyframes floatShape2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -40px) scale(1.05); }
+    66% { transform: translate(-20px, 20px) scale(1.1); }
+}
+
+@keyframes floatShape3 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(40px, -30px); }
+}
+
+@keyframes floatShape4 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-30px, 40px); }
+}
+
+@keyframes floatShape5 {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(20px, -30px) rotate(180deg); }
+}
+
+@keyframes floatShape6 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-50px, -30px) scale(1.15); }
+}
+
+@keyframes floatShape7 {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    50% { transform: translate(30px, 40px) rotate(120deg); }
+}
+
+@keyframes morphShape {
+    0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+    50% { border-radius: 70% 30% 30% 70% / 70% 70% 30% 30%; }
+}
+
+/* =========================================
+   Header Scroll Effect
+========================================= */
+.header-scrolled {
+    background: rgba(15, 23, 42, 0.85) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Light mode header scroll */
+html:not(.dark) .header-scrolled {
+    background: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* =========================================
+   Scroll-Triggered Animation Classes
+========================================= */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Stagger children delays */
+.animate-on-scroll:nth-child(2) { transition-delay: 0.1s; }
+.animate-on-scroll:nth-child(3) { transition-delay: 0.2s; }
+.animate-on-scroll:nth-child(4) { transition-delay: 0.3s; }
+.animate-on-scroll:nth-child(5) { transition-delay: 0.15s; }
+.animate-on-scroll:nth-child(6) { transition-delay: 0.25s; }
+
+/* =========================================
+   Scroll-Down Indicator
+========================================= */
+.scroll-indicator {
+    animation: fadeInUp 1s ease 1.5s both;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translate(-50%, 20px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@keyframes scrollDot {
+    0% { opacity: 0; transform: translateY(0); }
+    40% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(10px); }
+}
+
+.animate-scroll-dot {
+    animation: scrollDot 1.8s ease-in-out infinite;
+}
+
+/* =========================================
+   Step Icons — Hover Bounce
+========================================= */
+.step-icon {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.step-icon:hover {
+    transform: scale(1.15) rotate(-5deg);
+}
+
+/* =========================================
+   Feature Cards — Glow on Hover
+========================================= */
+.feature-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1.5rem;
+    background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(59, 130, 246, 0.06), transparent 40%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+.feature-card {
+    position: relative;
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+/* =========================================
+   Stats Bar — Subtle Glow Border
+========================================= */
+.stats-bar {
+    position: relative;
+}
+
+.stats-bar::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 1.5rem;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), transparent 40%, transparent 60%, rgba(245, 158, 11, 0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* =========================================
+   Light Mode Overrides for Landing
+========================================= */
+html:not(.dark) #hero .hero-gradient {
+    background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 25%, #e0f2fe 50%, #eff6ff 75%, #dbeafe 100%);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+}
+
+html:not(.dark) #hero h1 {
+    color: #0f172a;
+}
+
+html:not(.dark) #hero p {
+    color: #475569;
+}
+
+html:not(.dark) #hero .text-slate-300 {
+    color: #475569;
+}
+
+html:not(.dark) #hero .text-slate-400 {
+    color: #64748b;
+}
+
+html:not(.dark) .shape {
+    opacity: 0.03;
+}
+
+html:not(.dark) #stats .stats-bar {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+html:not(.dark) .stat-item .text-white,
+html:not(.dark) .stat-item .font-black {
+    color: #0f172a !important;
+}
+
+html:not(.dark) #features h3,
+html:not(.dark) #how-it-works h3 {
+    color: #0f172a;
+}
+
+html:not(.dark) .feature-card {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(0, 0, 0, 0.06);
+}
+
+html:not(.dark) .feature-card p,
+html:not(.dark) #features .text-slate-400,
+html:not(.dark) #how-it-works .text-slate-400 {
+    color: #64748b;
+}
+
+html:not(.dark) #cta .text-white {
+    color: #0f172a;
+}
+
+html:not(.dark) #cta > div > div {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: rgba(0, 0, 0, 0.06);
+}
+
+html:not(.dark) footer {
+    border-color: rgba(0, 0, 0, 0.06);
+}
+
+html:not(.dark) footer .text-slate-500 {
+    color: #64748b;
+}
+
+html:not(.dark) footer a {
+    background: rgba(0, 0, 0, 0.04);
+    border-color: rgba(0, 0, 0, 0.06);
+    color: #64748b;
+}
+
+html:not(.dark) footer a:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: #0f172a;
+}
+
+/* Header buttons in light mode over hero */
+html:not(.dark) #main-header:not(.header-scrolled) #auth-login {
+    color: #1e3a8a;
+    background: rgba(37, 99, 235, 0.08);
+    border-color: rgba(37, 99, 235, 0.2);
+}
+
+html:not(.dark) #main-header:not(.header-scrolled) #theme-toggle {
+    background: rgba(37, 99, 235, 0.08);
+    color: #1e3a8a;
+}
+
+html:not(.dark) #hero .bg-white\/10 {
+    background: rgba(37, 99, 235, 0.08);
+    border-color: rgba(37, 99, 235, 0.2);
+    color: #1d4ed8;
+}
+
+html:not(.dark) #hero .border-white\/30 {
+    border-color: rgba(37, 99, 235, 0.3);
+    color: #1d4ed8;
+}
+
+html:not(.dark) #hero .border-white\/20 {
+    border-color: rgba(37, 99, 235, 0.15);
+}
+
+html:not(.dark) .scroll-indicator .border-white\/30 {
+    border-color: rgba(37, 99, 235, 0.3);
+}
+
+html:not(.dark) .scroll-indicator .bg-white\/60 {
+    background: rgba(37, 99, 235, 0.5);
+}
+
+
+/* =========================================
+   Responsive Tweaks
+========================================= */
+@media (max-width: 640px) {
+    .shape-1 { width: 250px; height: 250px; }
+    .shape-2 { width: 180px; height: 180px; }
+    .shape-3,
+    .shape-4,
+    .shape-5,
+    .shape-6,
+    .shape-7 { display: none; }
+}

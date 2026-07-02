@@ -1,0 +1,24 @@
+{
+  "firestore": {
+    "rules": "firestore.rules"
+  },
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "hosting": {
+    "target": "yasta",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      "**/node_modules/**",
+      "*.py",
+      "*.txt",
+      ".vscode",
+      ".firebaserc",
+      "firestore.rules",
+      "storage.rules",
+      "CHANGELOG.md",
+      "README.md"
+    ]
+  }
+}

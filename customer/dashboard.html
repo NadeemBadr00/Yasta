@@ -1,0 +1,156 @@
+<!-- customer/dashboard.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <script>var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')};</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا | العميل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb' }, dark: { bg: '#0f172a', card: '#1e293b', border: '#334155', text: '#f8fafc', muted: '#94a3b8' } }, fontFamily: { cairo: ['Cairo', 'sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="bg-gray-50 dark:bg-dark-bg text-gray-900 dark:text-dark-text flex flex-col min-h-screen transition-colors duration-300 pb-20">
+
+    <!-- App Bar -->
+    <header class="hidden md:flex bg-white dark:bg-dark-card shadow-sm dark:shadow-none dark:border-b dark:border-dark-border py-4 px-6 justify-between items-center transition-colors sticky top-0 z-40">
+        <h1 class="text-2xl font-black text-primary-600 dark:text-primary-400 tracking-tight">يـسـطـا</h1>
+        <nav class="flex gap-4 items-center">
+            <button onclick="document.documentElement.classList.toggle('dark'); var d=document.documentElement.classList.contains('dark'); this.textContent=d?'🌙':'☀️'; localStorage.setItem('theme',d?'dark':'light');" class="p-2 rounded-xl bg-gray-100 dark:bg-dark-border hover:bg-gray-200 dark:hover:bg-slate-600 transition-all text-lg cursor-pointer">🌙</button>
+            <a href="history.html" class="font-bold text-gray-600 dark:text-gray-300 hover:text-primary-600">سجلاتي</a>
+            <button id="desktop-logout-btn" class="font-bold text-red-500 hover:text-red-600">تسجيل خروج</button>
+        </nav>
+    </header>
+
+    <!-- 🤖 AI Chatbot Floating Button -->
+    <a href="../chat.html" class="fixed bottom-24 right-5 z-50 w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-110 transition-all duration-300 group" title="مساعد يسطا الذكي">
+        <span class="text-2xl">🤖</span>
+        <span class="absolute -top-8 right-1/2 translate-x-1/2 bg-gray-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">المساعد الذكي</span>
+    </a>
+
+    <!-- شريط البحث السريع (Sticky) -->
+    <div class="sticky top-0 md:top-auto z-30 bg-gray-50/90 dark:bg-dark-bg/90 backdrop-blur-md pt-4 pb-2 px-4 shadow-sm md:shadow-none md:bg-transparent">
+        <div class="max-w-5xl mx-auto relative">
+            <input type="text" id="search-input" placeholder="ابحث عن خدمة (مثال: سباكة، تكييف، دهانات)..." class="w-full pl-4 pr-12 py-3.5 border border-gray-200 dark:border-dark-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary-500 bg-white dark:bg-dark-card dark:text-white transition-all shadow-sm font-bold text-sm">
+            <span class="absolute top-1/2 -translate-y-1/2 right-4 text-xl text-gray-400">🔍</span>
+        </div>
+    </div>
+
+    <main class="flex-grow p-4 md:p-6 max-w-5xl mx-auto w-full slide-up">
+        
+        <!-- Welcome Banner -->
+        <div id="welcome-banner" class="mb-6 rounded-2xl p-5 md:p-6 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white relative overflow-hidden shadow-lg shadow-blue-500/20">
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-purple-300 rounded-full blur-3xl"></div>
+            </div>
+            <div class="relative z-10">
+                <h2 id="welcome-name" class="text-xl md:text-2xl font-black">مرحباً! 👋</h2>
+                <p class="text-blue-100 mt-1 font-bold text-sm">كيف يمكننا مساعدتك اليوم؟</p>
+            </div>
+        </div>
+
+        <!-- Quick Stats Row -->
+        <div id="quick-stats" class="grid grid-cols-3 gap-3 mb-6">
+            <div class="bg-white dark:bg-dark-card rounded-2xl p-4 text-center shadow-sm border border-gray-100 dark:border-dark-border card-hover">
+                <div class="text-2xl mb-1">📦</div>
+                <div id="stat-orders" class="text-xl font-black text-gray-800 dark:text-white">-</div>
+                <div class="text-xs font-bold text-gray-500 dark:text-dark-muted">طلباتي</div>
+            </div>
+            <div class="bg-white dark:bg-dark-card rounded-2xl p-4 text-center shadow-sm border border-gray-100 dark:border-dark-border card-hover">
+                <div class="text-2xl mb-1">⭐</div>
+                <div id="stat-rating" class="text-xl font-black text-gray-800 dark:text-white">-</div>
+                <div class="text-xs font-bold text-gray-500 dark:text-dark-muted">تقييمي</div>
+            </div>
+            <div class="bg-white dark:bg-dark-card rounded-2xl p-4 text-center shadow-sm border border-gray-100 dark:border-dark-border card-hover">
+                <div class="text-2xl mb-1">💰</div>
+                <div id="stat-balance" class="text-xl font-black text-gray-800 dark:text-white">-</div>
+                <div class="text-xs font-bold text-gray-500 dark:text-dark-muted">رصيدي</div>
+            </div>
+        </div>
+
+        <!-- حاوية عرض الخدمات المنظمة -->
+        <div id="categories-container" class="space-y-8">
+            <!-- سيتم توليد الأقسام من الـ JS -->
+        </div>
+
+        <!-- رسالة عدم وجود نتائج للبحث -->
+        <div id="no-results-msg" class="hidden text-center py-10">
+            <div class="text-4xl mb-3">🧐</div>
+            <p class="text-gray-500 dark:text-dark-muted font-bold">عذراً، لم نجد خدمة بهذا الاسم.</p>
+            <p class="text-sm mt-2 text-primary-600 dark:text-primary-400 font-bold cursor-pointer" onclick="document.getElementById('search-input').value=''; document.getElementById('search-input').dispatchEvent(new Event('input'))">مسح البحث</p>
+        </div>
+    </main>
+
+    <!-- زر الإحالة العائم (FAB) -->
+    <a href="invite.html" class="fixed bottom-24 left-6 z-50 bg-gradient-to-r from-amber-500 to-orange-500 text-white w-14 h-14 rounded-full shadow-lg hover:shadow-xl flex items-center justify-center text-2xl active:scale-90 transition-all duration-200 hover:scale-110 animate-bounce" style="animation-duration: 2s; animation-iteration-count: 3;" title="ادعُ أصدقائك واكسب رصيد!">
+        🎁
+    </a>
+
+    <!-- بانر طلب إذن الإشعارات -->
+    <div id="notif-permission-banner" class="fixed bottom-20 left-0 right-0 z-[200] transform translate-y-full transition-transform duration-500 hidden">
+        <div class="mx-4 mb-4 md:mx-auto md:max-w-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 md:p-5 rounded-2xl shadow-2xl shadow-blue-500/30 flex items-center gap-4">
+            <span class="text-3xl shrink-0">🔔</span>
+            <div class="flex-1">
+                <p class="font-black text-sm leading-tight">فعّل الإشعارات</p>
+                <p class="text-xs text-blue-100 mt-1 font-bold">ليصلك تنبيه فوري عند قبول طلبك من فني</p>
+            </div>
+            <button id="enable-notif-btn" class="bg-white text-blue-600 px-4 py-2 rounded-xl font-black text-xs shrink-0 hover:bg-blue-50 transition-all active:scale-95 shadow">
+                تفعيل
+            </button>
+            <button id="dismiss-notif-btn" class="text-white/60 hover:text-white text-lg transition shrink-0">✕</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/customer-dashboard.js"></script>
+
+    <!-- FCM Notifications Setup -->
+    <script type="module">
+        import { requestNotificationPermission, onMessageReceived } from '../js/notifications.js';
+        import { auth } from '../js/firebase-config.js';
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) return;
+
+            const banner = document.getElementById('notif-permission-banner');
+            const enableBtn = document.getElementById('enable-notif-btn');
+            const dismissBtn = document.getElementById('dismiss-notif-btn');
+
+            if ('Notification' in window && Notification.permission === 'default') {
+                setTimeout(() => {
+                    banner.classList.remove('hidden');
+                    requestAnimationFrame(() => {
+                        banner.style.transform = 'translateY(0)';
+                    });
+                }, 3000);
+            } else if ('Notification' in window && Notification.permission === 'granted') {
+                await requestNotificationPermission();
+            }
+
+            if (enableBtn) {
+                enableBtn.addEventListener('click', async () => {
+                    enableBtn.innerText = 'جاري...';
+                    enableBtn.disabled = true;
+                    await requestNotificationPermission();
+                    banner.style.transform = 'translateY(100%)';
+                    setTimeout(() => banner.classList.add('hidden'), 500);
+                });
+            }
+
+            if (dismissBtn) {
+                dismissBtn.addEventListener('click', () => {
+                    banner.style.transform = 'translateY(100%)';
+                    setTimeout(() => banner.classList.add('hidden'), 500);
+                });
+            }
+
+            onMessageReceived((notification) => {
+                console.log('📩 إشعار جديد:', notification);
+            });
+        });
+    </script>
+</body>
+</html>

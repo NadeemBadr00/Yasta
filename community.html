@@ -1,0 +1,483 @@
+<!-- community.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا | مجتمع الطلبات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb' }, dark: { bg: '#0f172a', card: '#1e293b', border: '#334155', text: '#f8fafc', muted: '#94a3b8' } }, fontFamily: { cairo: ['Cairo', 'sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- ===== Community Premium Polish ===== -->
+    <style>
+        /* ─── Hero Section ─── */
+        .community-hero {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 40%, #7c3aed 100%);
+            background-size: 200% 200%;
+            animation: heroGradientShift 8s ease infinite;
+            position: relative;
+            overflow: hidden;
+        }
+        .community-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px);
+            background-size: 28px 28px;
+            pointer-events: none;
+            animation: heroDotsDrift 20s linear infinite;
+        }
+        .community-hero::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(to bottom, transparent, #f9fafb);
+            pointer-events: none;
+        }
+        .dark .community-hero::after {
+            background: linear-gradient(to bottom, transparent, #0f172a);
+        }
+        @keyframes heroGradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        @keyframes heroDotsDrift {
+            from { background-position: 0 0; }
+            to { background-position: 28px 28px; }
+        }
+        .hero-icon {
+            font-size: 3rem;
+            display: inline-block;
+            animation: heroBounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));
+        }
+        @keyframes heroBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .hero-title {
+            font-size: 1.6rem;
+            font-weight: 900;
+            color: #fff;
+            margin: 8px 0 4px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        }
+        .hero-subtitle {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.8);
+            font-weight: 600;
+        }
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 14px;
+        }
+        .hero-stat {
+            text-align: center;
+        }
+        .hero-stat-value {
+            font-size: 1.2rem;
+            font-weight: 900;
+            color: #fff;
+        }
+        .hero-stat-label {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.65);
+            font-weight: 600;
+        }
+
+        /* ─── Header accent line ─── */
+        .header-accent {
+            height: 3px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed, #f59e0b, #7c3aed, #2563eb);
+            background-size: 200% 100%;
+            animation: accentShimmer 3s ease-in-out infinite;
+        }
+        @keyframes accentShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* ─── Post Cards Premium (targeting JS-generated cards) ─── */
+        #posts-container > div {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        #posts-container > div::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        #posts-container > div:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.12), 0 4px 12px rgba(0,0,0,0.06);
+        }
+        #posts-container > div:hover::before {
+            opacity: 1;
+        }
+
+        /* Avatar gradient ring */
+        #posts-container .w-10.h-10 {
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(59, 130, 246, 0.3);
+            transition: box-shadow 0.3s;
+        }
+        .dark #posts-container .w-10.h-10 {
+            box-shadow: 0 0 0 2px #1e293b, 0 0 0 4px rgba(96, 165, 250, 0.3);
+        }
+        #posts-container > div:hover .w-10.h-10 {
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px #3b82f6;
+        }
+        .dark #posts-container > div:hover .w-10.h-10 {
+            box-shadow: 0 0 0 2px #1e293b, 0 0 0 4px #60a5fa;
+        }
+
+        /* Green-bordered tech posts get green accents */
+        #posts-container > div[class*="border-green"]::before {
+            background: linear-gradient(90deg, #22c55e, #16a34a, #10b981);
+        }
+
+        /* Comment button hover glow */
+        #posts-container button[onclick*="openComments"] {
+            transition: all 0.25s;
+        }
+        #posts-container button[onclick*="openComments"]:hover {
+            box-shadow: 0 2px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Staggered card entrance */
+        @keyframes cardFadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #posts-container > div {
+            animation: cardFadeUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+        #posts-container > div:nth-child(1) { animation-delay: 0s; }
+        #posts-container > div:nth-child(2) { animation-delay: 0.06s; }
+        #posts-container > div:nth-child(3) { animation-delay: 0.12s; }
+        #posts-container > div:nth-child(4) { animation-delay: 0.18s; }
+        #posts-container > div:nth-child(5) { animation-delay: 0.24s; }
+        #posts-container > div:nth-child(6) { animation-delay: 0.3s; }
+
+        /* ─── Glassmorphism Post Modal ─── */
+        #post-modal > div {
+            background: rgba(255,255,255,0.85) !important;
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        #post-modal > div::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed, #06b6d4);
+        }
+        .dark #post-modal > div {
+            background: rgba(30, 41, 59, 0.85) !important;
+            border-color: rgba(51, 65, 85, 0.5);
+        }
+
+        /* ─── Comments Modal Glass ─── */
+        #comments-modal > div {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        /* ─── Add Post Button Premium ─── */
+        #add-post-btn {
+            background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        #add-post-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+            animation: btnShimmer 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes btnShimmer {
+            0% { transform: translateX(150%); }
+            100% { transform: translateX(-150%); }
+        }
+        #add-post-btn:hover {
+            box-shadow: 0 6px 24px rgba(37, 99, 235, 0.45);
+            transform: scale(1.03);
+        }
+
+        /* ─── Filter Sidebar Premium ─── */
+        #filter-sidebar {
+            border-left: none;
+        }
+        #filter-sidebar > div:first-child {
+            position: relative;
+        }
+        #filter-sidebar > div:first-child::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #2563eb, #7c3aed, #06b6d4);
+        }
+
+        /* ─── Skeleton Cards ─── */
+        .community-skeleton {
+            background: #fff;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+        }
+        .dark .community-skeleton {
+            background: #1e293b;
+            border-color: #334155;
+        }
+        .skel-line {
+            border-radius: 8px;
+            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+            background-size: 200% 100%;
+            animation: skelPulse 1.5s ease-in-out infinite;
+        }
+        .dark .skel-line {
+            background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
+            background-size: 200% 100%;
+        }
+        @keyframes skelPulse {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ─── Filter button in header ─── */
+        #open-filter-sidebar {
+            border: 1px solid transparent;
+            position: relative;
+        }
+        #open-filter-sidebar:hover {
+            border-color: rgba(37, 99, 235, 0.3);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
+        }
+
+        /* ─── Empty state ─── */
+        #posts-container > div[class*="border-dashed"] {
+            padding: 3rem 1rem !important;
+        }
+
+        /* ─── Delete button hover ─── */
+        #posts-container button[onclick*="deletePost"]:hover {
+            transform: scale(1.05);
+        }
+    </style>
+
+<script>if(localStorage.getItem('theme')==='dark'||(!('theme' in localStorage)&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}</script>
+</head>
+<body class="bg-gray-50 dark:bg-dark-bg text-gray-900 dark:text-dark-text flex flex-col min-h-screen transition-colors duration-300 pb-24 overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="bg-white dark:bg-dark-card shadow-sm dark:shadow-none dark:border-b dark:border-dark-border py-4 px-4 sticky top-0 z-40 transition-colors">
+        <div class="max-w-3xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <span class="text-2xl">🏪</span>
+                <h1 class="text-xl font-black text-primary-600 dark:text-primary-400">السوق المفتوح</h1>
+            </div>
+            <div class="flex gap-2">
+                <button id="open-filter-sidebar" class="bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 px-3 py-2 rounded-xl text-sm font-bold transition flex items-center gap-1">
+                    <span class="text-lg">🎛️</span> تصفية
+                </button>
+                <button id="add-post-btn" class="hidden bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-md transition active:scale-95">
+                    + إضافة منشور
+                </button>
+            </div>
+        </div>
+        <div class="header-accent mt-3 -mb-4 mx-[-16px]"></div>
+    </header>
+
+    <!-- ===== Hero Section ===== -->
+    <section class="community-hero">
+        <div class="max-w-3xl mx-auto px-4 py-8 text-center">
+            <div class="hero-icon">🏪</div>
+            <h2 class="hero-title">السوق المفتوح</h2>
+            <p class="hero-subtitle">اعرض مشكلتك واحصل على عروض أسعار من فنيين محترفين</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value">💬</div>
+                    <div class="hero-stat-label">طلبات مفتوحة</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">🛠️</div>
+                    <div class="hero-stat-label">فنيين نشطين</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">⭐</div>
+                    <div class="hero-stat-label">عروض يومية</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sidebar Overlay -->
+    <div id="filter-overlay" class="fixed inset-0 bg-black/50 z-40 hidden backdrop-blur-sm transition-opacity"></div>
+
+    <!-- Filter Sidebar -->
+    <aside id="filter-sidebar" class="bg-white dark:bg-dark-card w-72 flex-shrink-0 flex flex-col transition-transform duration-300 transform translate-x-full fixed z-50 h-full right-0 shadow-2xl border-l border-gray-100 dark:border-dark-border top-0">
+        <div class="p-6 border-b border-gray-100 dark:border-dark-border flex justify-between items-center">
+            <h2 class="text-xl font-black text-primary-600 dark:text-primary-400">تصفية بالتخصص</h2>
+            <button id="close-filter-sidebar" class="text-gray-400 text-3xl hover:text-red-500 transition leading-none">&times;</button>
+        </div>
+        <div class="flex-grow overflow-y-auto p-4 space-y-2" id="sidebar-categories">
+            <!-- سيتم الملء بواسطة الجافاسكريبت -->
+        </div>
+        <div class="p-4 border-t border-gray-100 dark:border-dark-border bg-gray-50 dark:bg-slate-800/50">
+            <button id="reset-filters" class="w-full bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-slate-600 py-2.5 rounded-xl font-bold transition">
+                إلغاء التصفية
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-grow p-4 max-w-3xl mx-auto w-full slide-up">
+        <div id="posts-container" class="space-y-5">
+            <!-- Skeleton Loading Cards -->
+            <div class="community-skeleton">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="skel-line w-10 h-10 rounded-full shrink-0"></div>
+                    <div class="flex-1 space-y-2">
+                        <div class="skel-line h-4 w-3/4"></div>
+                        <div class="skel-line h-3 w-1/2"></div>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="skel-line h-3 w-full"></div>
+                    <div class="skel-line h-3 w-5/6"></div>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <div class="skel-line h-8 w-28 rounded-full"></div>
+                </div>
+            </div>
+            <div class="community-skeleton">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="skel-line w-10 h-10 rounded-full shrink-0"></div>
+                    <div class="flex-1 space-y-2">
+                        <div class="skel-line h-4 w-2/3"></div>
+                        <div class="skel-line h-3 w-2/5"></div>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="skel-line h-3 w-full"></div>
+                    <div class="skel-line h-3 w-4/6"></div>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <div class="skel-line h-8 w-28 rounded-full"></div>
+                </div>
+            </div>
+            <div class="community-skeleton">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="skel-line w-10 h-10 rounded-full shrink-0"></div>
+                    <div class="flex-1 space-y-2">
+                        <div class="skel-line h-4 w-1/2"></div>
+                        <div class="skel-line h-3 w-1/3"></div>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div class="skel-line h-3 w-5/6"></div>
+                    <div class="skel-line h-3 w-3/6"></div>
+                </div>
+                <div class="flex gap-2 mt-4">
+                    <div class="skel-line h-8 w-28 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal إضافة منشور (للعملاء والفنيين) -->
+    <div id="post-modal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-dark-card rounded-2xl shadow-2xl w-full max-w-md p-6 transform scale-95 transition-transform slide-up">
+            <h2 class="text-xl font-black mb-4">إضافة طلب أو عرض خدمة</h2>
+            <form id="post-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold mb-1">التخصص</label>
+                    <select id="post-category" required class="w-full px-4 py-2 border rounded-xl bg-gray-50 dark:bg-slate-800 dark:border-dark-border dark:text-white">
+                        <option value="سباكة">سباكة</option>
+                        <option value="كهرباء">كهرباء</option>
+                        <option value="تكييفات">تكييفات</option>
+                        <option value="نجارة">نجارة</option>
+                        <option value="أخرى">أخرى</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">التفاصيل</label>
+                    <textarea id="post-desc" required rows="3" class="w-full px-4 py-2 border rounded-xl bg-gray-50 dark:bg-slate-800 dark:border-dark-border dark:text-white resize-none" placeholder="اشرح مشكلتك كعميل، أو قدم عرضك كفني..."></textarea>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button type="submit" id="submit-post" class="flex-1 bg-primary-600 text-white font-bold py-2.5 rounded-xl">نشر</button>
+                    <button type="button" id="close-post-modal" class="flex-1 bg-gray-200 dark:bg-slate-700 font-bold py-2.5 rounded-xl">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal التعليقات -->
+    <div id="comments-modal" class="fixed inset-0 bg-black/60 z-[100] hidden flex items-end sm:items-center justify-center sm:p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-dark-card rounded-t-3xl sm:rounded-2xl shadow-2xl w-full max-w-lg h-[80vh] sm:h-[600px] flex flex-col slide-up-sheet sm:slide-up">
+            <div class="p-4 border-b dark:border-dark-border flex justify-between items-center">
+                <h2 class="font-black">التعليقات والعروض</h2>
+                <button id="close-comments" class="text-2xl leading-none">&times;</button>
+            </div>
+            
+            <!-- قائمة التعليقات -->
+            <div id="comments-list" class="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-slate-900/50">
+                <!-- Comments injected here -->
+            </div>
+
+            <!-- إضافة تعليق / عرض سعر -->
+            <div class="p-4 border-t dark:border-dark-border bg-white dark:bg-dark-card">
+                <!-- Bid Mode Toggle (technicians only) -->
+                <div id="bid-toggle-wrapper" class="hidden mb-2">
+                    <button type="button" id="bid-toggle-btn" class="text-xs font-bold px-3 py-1.5 rounded-full border transition-all duration-200 flex items-center gap-1 bg-gray-100 dark:bg-slate-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-dark-border hover:border-green-400 hover:text-green-600">
+                        💰 تقديم عرض سعر
+                    </button>
+                </div>
+
+                <!-- Bid Fields (hidden by default) -->
+                <div id="bid-fields" class="hidden mb-2 flex gap-2 animate-fade-in">
+                    <input type="number" id="bid-price" min="1" class="w-1/2 px-3 py-2 border rounded-xl bg-gray-50 dark:bg-slate-800 dark:border-dark-border dark:text-white text-sm font-bold" placeholder="السعر بالجنيه 💰">
+                    <input type="text" id="bid-duration" class="w-1/2 px-3 py-2 border rounded-xl bg-gray-50 dark:bg-slate-800 dark:border-dark-border dark:text-white text-sm" placeholder="المدة المتوقعة ⏱️">
+                </div>
+
+                <form id="comment-form" class="flex gap-2">
+                    <input type="text" id="comment-text" required class="flex-1 px-4 py-2 border rounded-full bg-gray-100 dark:bg-slate-800 dark:border-dark-border dark:text-white" placeholder="اكتب تعليقك أو عرضك...">
+                    <button type="submit" id="comment-send-btn" class="bg-primary-600 text-white w-10 h-10 rounded-full flex items-center justify-center hover:bg-primary-700 transition">
+                        <svg class="w-5 h-5 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/community.js"></script>
+</body>
+</html>

@@ -1,0 +1,550 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <script>var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')};</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا | Yasta - الصنايعي المضمون لحد باب بيتك</title>
+    <meta name="description" content="يسطا - أول منصة ذكية تربطك بأمهر الفنيين والسباكين والنجارين في منطقتك، مع ضمان الأمان والموثوقية من خلال التوثيق بالرقم القومي.">
+    <meta name="keywords" content="يسطا, فنيين, سباكة, نجارة, كهرباء, صيانة, خدمات منزلية, مصر">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- إعدادات Tailwind المتقدمة (الألوان + الدارك مود) -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+                        accent: { 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706' },
+                        dark: { bg: '#0f172a', card: '#1e293b', border: '#334155', text: '#f8fafc', muted: '#94a3b8' }
+                    },
+                    fontFamily: { cairo: ['Cairo', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gray-50 dark:bg-dark-bg text-gray-900 dark:text-dark-text font-cairo antialiased overflow-x-hidden transition-colors duration-300">
+
+    <!-- ===================== HEADER ===================== -->
+    <header id="main-header" class="fixed top-0 left-0 right-0 z-50 transition-all duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+
+            <!-- اللوجو الموحد (Yasta Brand Component) -->
+            <a href="index.html" class="flex items-center gap-3 group">
+                <div class="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-700 text-white rounded-2xl shadow-lg shadow-primary-500/30 transform -rotate-3 group-hover:rotate-0 group-hover:scale-110 transition-all duration-300">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-full h-full p-1.5">
+                        <path d="M 35 15 L 35 35 A 15 15 0 0 0 65 35 L 65 15" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" />
+                        <line x1="50" y1="50" x2="50" y2="60" stroke="currentColor" stroke-width="8" />
+                        <line x1="25" y1="55" x2="75" y2="55" stroke="currentColor" stroke-width="12" stroke-linecap="round" />
+                        <ellipse cx="50" cy="76" rx="14" ry="18" fill="none" stroke="currentColor" stroke-width="8" />
+                        <polygon points="50,46 58,50.5 58,59.5 50,64 42,59.5 42,50.5" fill="#eab308" />
+                        <circle cx="50" cy="55" r="4" fill="#2563eb" />
+                    </svg>
+                </div>
+                <span class="text-2xl font-black tracking-tight bg-gradient-to-l from-primary-400 to-primary-600 bg-clip-text text-transparent">يـسـطـا</span>
+            </a>
+
+            <nav class="flex items-center gap-3 sm:gap-4">
+                <!-- زر تبديل الوضع الليلي -->
+                <button id="theme-toggle" onclick="document.documentElement.classList.toggle('dark'); var d=document.documentElement.classList.contains('dark'); document.getElementById('theme-toggle-icon').textContent=d?'🌙':'☀️'; localStorage.setItem('theme',d?'dark':'light');" class="p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/10 text-gray-300 hover:text-white hover:bg-white/20 transition-all duration-300 cursor-pointer">
+                    <span id="theme-toggle-icon" class="text-lg leading-none">🌙</span>
+                </button>
+
+                <!-- حالة غير مسجل -->
+                <a id="auth-login" href="login.html" class="relative px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 hover:border-white/40 transition-all duration-300">تسجيل الدخول</a>
+
+                <!-- حالة مسجل دخول (مخفي افتراضياً) -->
+                <a id="auth-dashboard" href="#" class="hidden relative px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-gradient-to-l from-primary-500 to-primary-700 shadow-lg shadow-primary-500/30 hover:shadow-primary-500/50 hover:scale-105 transition-all duration-300">لوحة التحكم 🚀</a>
+            </nav>
+        </div>
+    </header>
+
+
+    <!-- ===================== HERO SECTION ===================== -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden">
+
+        <!-- Animated Gradient Background -->
+        <div class="absolute inset-0 hero-gradient"></div>
+
+        <!-- Floating Animated Shapes (CSS only) -->
+        <div class="floating-shapes" aria-hidden="true">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+            <div class="shape shape-6"></div>
+            <div class="shape shape-7"></div>
+        </div>
+
+        <!-- Subtle Grid Pattern -->
+        <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22%3E%3Cpath d=%22M0 0h60v60H0z%22 fill=%22none%22 stroke=%22%23fff%22 stroke-width=%220.5%22/%3E%3C/svg%3E');"></div>
+
+        <!-- Hero Content -->
+        <div class="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6">
+            <!-- Badge -->
+            <div class="animate-on-scroll inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-sm text-primary-300 font-bold mb-8">
+                <span class="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                متاح الآن في مصر · +15 تخصص
+            </div>
+
+            <!-- Main Heading -->
+            <h1 class="animate-on-scroll text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white leading-[1.2] mb-6">
+                الصنايعي المضمون
+                <br>
+                <span class="hero-gradient-text">لحد باب بيتك</span>
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="animate-on-scroll text-lg sm:text-xl md:text-2xl text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
+                نربطك بأمهر الفنيين في منطقتك مع <span class="text-accent-400 font-bold">ضمان أمان كامل</span> وتقييمات حقيقية من عملاء زيّك.
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="animate-on-scroll flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="register.html?role=customer" class="group relative inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-gradient-to-l from-primary-500 to-primary-700 text-white font-black text-lg shadow-2xl shadow-primary-500/30 hover:shadow-primary-500/50 hover:scale-105 active:scale-100 transition-all duration-300">
+                    <span>أطلب فني الآن</span>
+                    <span class="text-xl transition-transform duration-300 group-hover:-translate-x-1">←</span>
+                    <div class="absolute inset-0 rounded-2xl bg-gradient-to-l from-primary-400 to-primary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-xl"></div>
+                </a>
+                <a href="register.html?role=technician" class="inline-flex items-center gap-2 px-8 py-4 rounded-2xl border-2 border-white/30 text-white font-bold text-lg backdrop-blur-md hover:bg-white/10 hover:border-white/50 hover:scale-105 active:scale-100 transition-all duration-300">
+                    <span>🛠️</span>
+                    <span>سجل كصنايعي</span>
+                </a>
+            </div>
+
+            <!-- Trust Badges -->
+            <div class="animate-on-scroll mt-10 mb-24 flex flex-wrap justify-center gap-6 sm:gap-10 text-sm text-slate-400">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <span>فنيين موثقين بالرقم القومي</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>وصول الفني خلال 30 دقيقة</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    <span>دفع آمن بأكثر من طريقة</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scroll Down Indicator -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 scroll-indicator">
+            <div class="w-7 h-12 rounded-full border-2 border-white/30 flex items-start justify-center p-2">
+                <div class="w-1.5 h-3 bg-white/60 rounded-full animate-scroll-dot"></div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ===================== STATS BAR ===================== -->
+    <section id="stats" class="relative z-10 -mt-10">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="stats-bar grid grid-cols-2 md:grid-cols-4 gap-1 p-2 rounded-3xl bg-white/5 backdrop-blur-2xl border border-white/10 shadow-2xl shadow-black/20">
+
+                <div class="stat-item text-center py-6 px-4 rounded-2xl hover:bg-white/5 transition-all duration-300">
+                    <div class="text-3xl sm:text-4xl font-black text-white mb-1">
+                        <span class="counter" data-target="500">0</span><span class="text-accent-500">+</span>
+                    </div>
+                    <div class="text-sm text-slate-400 font-bold">فني موثق</div>
+                </div>
+
+                <div class="stat-item text-center py-6 px-4 rounded-2xl hover:bg-white/5 transition-all duration-300">
+                    <div class="text-3xl sm:text-4xl font-black text-white mb-1">
+                        <span class="counter" data-target="10000">0</span><span class="text-accent-500">+</span>
+                    </div>
+                    <div class="text-sm text-slate-400 font-bold">طلب مكتمل</div>
+                </div>
+
+                <div class="stat-item text-center py-6 px-4 rounded-2xl hover:bg-white/5 transition-all duration-300">
+                    <div class="text-3xl sm:text-4xl font-black text-white mb-1">
+                        <span class="counter-decimal" data-target="4.8">0</span>
+                        <span class="text-accent-400 text-lg">⭐</span>
+                    </div>
+                    <div class="text-sm text-slate-400 font-bold">تقييم متوسط</div>
+                </div>
+
+                <div class="stat-item text-center py-6 px-4 rounded-2xl hover:bg-white/5 transition-all duration-300">
+                    <div class="text-3xl sm:text-4xl font-black text-white mb-1">
+                        <span class="counter" data-target="15">0</span><span class="text-accent-500">+</span>
+                    </div>
+                    <div class="text-sm text-slate-400 font-bold">تخصص</div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ===================== FEATURES SECTION ===================== -->
+    <section id="features" class="relative py-24 sm:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Section Header -->
+            <div class="text-center mb-16 sm:mb-20">
+                <div class="animate-on-scroll inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-400 text-sm font-bold mb-4">
+                    ✨ ليه تختار يسطا؟
+                </div>
+                <h2 class="animate-on-scroll text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4">
+                    كل اللي محتاجه <span class="hero-gradient-text">في مكان واحد</span>
+                </h2>
+                <p class="animate-on-scroll text-lg text-slate-400 max-w-xl mx-auto">
+                    تقنيات متقدمة مع بساطة الاستخدام — كده يسطا بيغيّر قواعد اللعبة
+                </p>
+            </div>
+
+            <!-- Feature Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                <!-- Feature 1 -->
+                <div class="animate-on-scroll feature-card group p-8 rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] hover:border-primary-500/40 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary-500/10">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary-500/20 to-primary-700/20 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">🤖</div>
+                    <h3 class="text-xl font-black text-white mb-3">تشخيص ذكي بالـ AI</h3>
+                    <p class="text-slate-400 leading-relaxed">الذكاء الاصطناعي بيحلل مشكلتك ويقترحلك الحل والفني المناسب قبل ما يوصلك.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="animate-on-scroll feature-card group p-8 rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] hover:border-accent-500/40 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-accent-500/10">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-accent-500/20 to-accent-600/20 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">🛡️</div>
+                    <h3 class="text-xl font-black text-white mb-3">ضمان 30 يوم</h3>
+                    <p class="text-slate-400 leading-relaxed">كل شغلانة عليها ضمان شهر كامل. لو في أي مشكلة، بنرجعلك الفني أو فلوسك.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="animate-on-scroll feature-card group p-8 rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] hover:border-green-500/40 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-green-500/10">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-500/20 to-green-700/20 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">📍</div>
+                    <h3 class="text-xl font-black text-white mb-3">تتبع GPS حي</h3>
+                    <p class="text-slate-400 leading-relaxed">اعرف مكان الفني بالضبط وتتبع وصوله ليك لحظة بلحظة على الخريطة.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="animate-on-scroll feature-card group p-8 rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] hover:border-purple-500/40 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/10">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-purple-700/20 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">💬</div>
+                    <h3 class="text-xl font-black text-white mb-3">محادثة مباشرة</h3>
+                    <p class="text-slate-400 leading-relaxed">تواصل مع الفني مباشرة عبر الشات — ابعتله صور وصوتيات لوصف المشكلة.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="animate-on-scroll feature-card group p-8 rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] hover:border-yellow-500/40 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-yellow-500/10">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">⭐</div>
+                    <h3 class="text-xl font-black text-white mb-3">فنيين موثقين</h3>
+                    <p class="text-slate-400 leading-relaxed">كل فني عندنا متوثق بالرقم القومي ومراجعاته من عملاء حقيقيين — مش بوتات.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="animate-on-scroll feature-card group p-8 rounded-3xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] hover:border-emerald-500/40 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-500/10">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-emerald-700/20 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-300">💳</div>
+                    <h3 class="text-xl font-black text-white mb-3">دفع متعدد</h3>
+                    <p class="text-slate-400 leading-relaxed">ادفع كاش، فودافون كاش، فيزا، أو إنستاباي — اللي يريحك أنت.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ===================== HOW IT WORKS ===================== -->
+    <section id="how-it-works" class="relative py-24 sm:py-32 overflow-hidden">
+        <!-- Background Glow -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary-500/5 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+            <!-- Section Header -->
+            <div class="text-center mb-16 sm:mb-20">
+                <div class="animate-on-scroll inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-500/10 border border-accent-500/20 text-accent-400 text-sm font-bold mb-4">
+                    🚀 إزاي الموضوع بيشتغل؟
+                </div>
+                <h2 class="animate-on-scroll text-3xl sm:text-4xl md:text-5xl font-black text-white mb-4">
+                    <span class="hero-gradient-text">4 خطوات</span> بس وخلاص
+                </h2>
+                <p class="animate-on-scroll text-lg text-slate-400 max-w-xl mx-auto">
+                    من الطلب للتقييم — كل حاجة سريعة وسهلة
+                </p>
+            </div>
+
+            <!-- Steps -->
+            <div class="relative">
+                <!-- Connecting Line (Desktop) -->
+                <div class="hidden md:block absolute top-1/2 right-[12%] left-[12%] h-0.5 bg-gradient-to-l from-primary-500/50 via-accent-500/50 to-primary-500/50 -translate-y-1/2"></div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-4">
+
+                    <!-- Step 1 -->
+                    <div class="animate-on-scroll text-center relative">
+                        <div class="relative z-10 w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center text-4xl shadow-xl shadow-primary-500/30 mb-6 step-icon">📱</div>
+                        <h3 class="text-lg font-black text-white mb-2">اطلب خدمة</h3>
+                        <p class="text-sm text-slate-400">وصّف المشكلة أو اختار من القايمة وابعت طلبك</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="animate-on-scroll text-center relative">
+                        <div class="relative z-10 w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center text-4xl shadow-xl shadow-accent-500/30 mb-6 step-icon">🔍</div>
+                        <h3 class="text-lg font-black text-white mb-2">يوصلك فني</h3>
+                        <p class="text-sm text-slate-400">الـ AI بيختارلك أقرب وأنسب فني متاح في منطقتك</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="animate-on-scroll text-center relative">
+                        <div class="relative z-10 w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center text-4xl shadow-xl shadow-green-500/30 mb-6 step-icon">🔧</div>
+                        <h3 class="text-lg font-black text-white mb-2">ينجز الشغل</h3>
+                        <p class="text-sm text-slate-400">الفني بيجيلك ويحل المشكلة باحترافية ونظافة</p>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="animate-on-scroll text-center relative">
+                        <div class="relative z-10 w-20 h-20 mx-auto rounded-3xl bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center text-4xl shadow-xl shadow-purple-500/30 mb-6 step-icon">⭐</div>
+                        <h3 class="text-lg font-black text-white mb-2">قيّم التجربة</h3>
+                        <p class="text-sm text-slate-400">قيّم الفني وساعد غيرك يختار الأفضل</p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ===================== CTA SECTION ===================== -->
+    <section id="cta" class="relative py-24 sm:py-32 overflow-hidden">
+        <!-- Background Decoration -->
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-primary-500/5 to-transparent pointer-events-none"></div>
+        <div class="absolute top-0 right-0 w-72 h-72 bg-primary-500/10 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-0 left-0 w-72 h-72 bg-accent-500/10 rounded-full blur-[100px]"></div>
+
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <div class="animate-on-scroll p-10 sm:p-16 rounded-[2.5rem] bg-white/[0.03] backdrop-blur-2xl border border-white/[0.08] shadow-2xl">
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-white mb-6 leading-tight">
+                    جاهز تحل مشكلتك
+                    <br>
+                    <span class="hero-gradient-text">في أقل من ساعة؟</span>
+                </h2>
+                <p class="text-lg text-slate-400 max-w-lg mx-auto mb-10">
+                    انضم لآلاف العملاء اللي بيعتمدوا على يسطا كل يوم. أول طلب عليك — وبضمان!
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="register.html?role=customer" class="group relative inline-flex items-center gap-3 px-10 py-5 rounded-2xl bg-gradient-to-l from-primary-500 to-primary-700 text-white font-black text-xl shadow-2xl shadow-primary-500/30 hover:shadow-primary-500/50 hover:scale-105 active:scale-100 transition-all duration-300">
+                        <span>ابدأ دلوقتي</span>
+                        <span class="text-2xl transition-transform duration-300 group-hover:-translate-x-1">🚀</span>
+                        <div class="absolute inset-0 rounded-2xl bg-gradient-to-l from-primary-400 to-primary-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10 blur-xl"></div>
+                    </a>
+                    <a href="tech-directory.html" class="text-slate-400 hover:text-white font-bold transition-colors duration-300 underline underline-offset-4 decoration-slate-700 hover:decoration-primary-500">
+                        أو تصفّح الفنيين
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="relative border-t border-white/[0.06] py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+
+                <!-- Logo & Copyright -->
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center">
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-full h-full p-1 text-white">
+                            <path d="M 35 15 L 35 35 A 15 15 0 0 0 65 35 L 65 15" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" />
+                            <line x1="50" y1="50" x2="50" y2="60" stroke="currentColor" stroke-width="8" />
+                            <line x1="25" y1="55" x2="75" y2="55" stroke="currentColor" stroke-width="12" stroke-linecap="round" />
+                            <ellipse cx="50" cy="76" rx="14" ry="18" fill="none" stroke="currentColor" stroke-width="8" />
+                            <polygon points="50,46 58,50.5 58,59.5 50,64 42,59.5 42,50.5" fill="#eab308" />
+                            <circle cx="50" cy="55" r="4" fill="#2563eb" />
+                        </svg>
+                    </div>
+                    <span class="text-sm text-slate-500">© 2026 يسطا — جميع الحقوق محفوظة</span>
+                </div>
+
+                <!-- Social Links -->
+                <div class="flex items-center gap-4">
+                    <a href="#" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300" aria-label="Facebook">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300" aria-label="Twitter / X">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300" aria-label="Instagram">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300" aria-label="WhatsApp">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </a>
+                </div>
+            </div>
+            <!-- روابط إضافية -->
+            <div class="mt-8 pt-8 border-t border-white/[0.06] flex flex-wrap justify-center gap-6 text-sm">
+                <a href="about.html" class="text-slate-400 hover:text-primary-400 transition-colors duration-300">من نحن</a>
+                <a href="contact.html" class="text-slate-400 hover:text-primary-400 transition-colors duration-300">تواصل معنا</a>
+                <a href="terms.html" class="text-slate-400 hover:text-primary-400 transition-colors duration-300">شروط الاستخدام</a>
+                <a href="privacy.html" class="text-slate-400 hover:text-primary-400 transition-colors duration-300">سياسة الخصوصية</a>
+                <a href="refund.html" class="text-slate-400 hover:text-primary-400 transition-colors duration-300">سياسة الاسترداد</a>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ===================== SCRIPTS ===================== -->
+    <script type="module">
+        import { auth, db } from './js/firebase-config.js';
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+        import { checkAuthState } from './js/shared.js';
+
+        checkAuthState(false);
+
+        onAuthStateChanged(auth, async (user) => {
+            const loginBtn = document.getElementById('auth-login');
+            const dashBtn = document.getElementById('auth-dashboard');
+            
+            if (user) {
+                // مسجل دخول — اعرض زر لوحة التحكم
+                loginBtn.classList.add('hidden');
+                dashBtn.classList.remove('hidden');
+                
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', user.uid));
+                    const role = userDoc.exists() ? userDoc.data().role : 'customer';
+                    
+                    if (role === 'technician') {
+                        dashBtn.href = 'technician/dashboard.html';
+                        dashBtn.textContent = 'لوحة الفني 🛠️';
+                    } else if (role === 'admin') {
+                        dashBtn.href = 'admin/dashboard.html';
+                        dashBtn.textContent = 'لوحة الإدارة 📊';
+                    } else {
+                        dashBtn.href = 'customer/dashboard.html';
+                        dashBtn.textContent = 'لوحة التحكم 🚀';
+                    }
+                } catch(e) {
+                    dashBtn.href = 'customer/dashboard.html';
+                }
+            } else {
+                // مش مسجل — اعرض زر تسجيل الدخول
+                loginBtn.classList.remove('hidden');
+                dashBtn.classList.add('hidden');
+            }
+        });
+    </script>
+
+    <!-- Landing Page Interactions -->
+    <script>
+        // ==========================================
+        // 1. Header Scroll Effect
+        // ==========================================
+        const header = document.getElementById('main-header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('header-scrolled');
+            } else {
+                header.classList.remove('header-scrolled');
+            }
+        });
+
+        // ==========================================
+        // 2. Animated Counters
+        // ==========================================
+        function animateCounter(el, target, isDecimal = false) {
+            const duration = 2000;
+            const start = performance.now();
+
+            function update(now) {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                // Ease out cubic
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = eased * target;
+
+                if (isDecimal) {
+                    el.textContent = current.toFixed(1);
+                } else {
+                    el.textContent = Math.floor(current).toLocaleString('en');
+                }
+
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        // ==========================================
+        // 3. Scroll-Triggered Animations (Intersection Observer)
+        // ==========================================
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-on-scroll').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Counter observer
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Animate integer counters
+                    entry.target.querySelectorAll('.counter').forEach(c => {
+                        animateCounter(c, parseInt(c.dataset.target));
+                    });
+                    // Animate decimal counters
+                    entry.target.querySelectorAll('.counter-decimal').forEach(c => {
+                        animateCounter(c, parseFloat(c.dataset.target), true);
+                    });
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const statsSection = document.getElementById('stats');
+        if (statsSection) counterObserver.observe(statsSection);
+
+
+        // ==========================================
+        // 4. Theme Toggle (Dark/Light)
+        // ==========================================
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-toggle-icon');
+        const html = document.documentElement;
+
+        // Check saved preference
+        const savedTheme = localStorage.getItem('theme') || localStorage.getItem('yasta-theme');
+        if (savedTheme === 'light') {
+            html.classList.remove('dark');
+            if (themeIcon) themeIcon.textContent = '☀️';
+        } else if (savedTheme === 'dark') {
+            html.classList.add('dark');
+            if (themeIcon) themeIcon.textContent = '🌙';
+        }
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                html.classList.toggle('dark');
+                const isDark = html.classList.contains('dark');
+                if (themeIcon) themeIcon.textContent = isDark ? '🌙' : '☀️';
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+        }
+    </script>
+
+</body>
+</html>

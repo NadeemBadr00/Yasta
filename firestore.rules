@@ -1,0 +1,167 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ═══════════════════════════════════════════════════════════════
+    // دوال مساعدة - Helper Functions
+    // ═══════════════════════════════════════════════════════════════
+
+    // التحقق من تسجيل الدخول
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // التحقق من أن المستخدم هو صاحب الحساب
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // التحقق من أن المستخدم مشرف (أدمن)
+    // المشرفون: hassan7hassan22@gmail.com, khalaaaf7474@gmail.com
+    // وأي بريد يبدأ بـ gcode4306
+    function isAdmin() {
+      return request.auth.token.email in ['hassan7hassan22@gmail.com', 'khalaaaf7474@gmail.com']
+        || request.auth.token.email.matches('gcode4306.*');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // مجموعة المستخدمين - Users Collection
+    // ═══════════════════════════════════════════════════════════════
+    // الحقول: name, email, phone, nationalId, role, status,
+    //         mainCategory, rating, referralCode, walletBalance
+    match /users/{userId} {
+      // القراءة: أي مستخدم مسجل دخوله يمكنه قراءة بيانات المستخدمين
+      allow read: if isAuthenticated();
+
+      // الإنشاء: المستخدم يمكنه إنشاء ملفه الشخصي فقط
+      allow create: if isOwner(userId);
+
+      // التعديل: صاحب الحساب أو المشرف فقط
+      allow update: if isOwner(userId) || isAdmin();
+
+      // الحذف: المشرف فقط يمكنه حذف الحسابات
+      allow delete: if isAdmin();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // مجموعة الطلبات - Requests Collection
+    // ═══════════════════════════════════════════════════════════════
+    // الحقول: customerId, technicianId, category, description,
+    //         imageUrl, location, techLocation, status, cost,
+    //         aiDiagnosis, createdAt
+    match /requests/{requestId} {
+      // القراءة: أي مستخدم مسجل دخوله يمكنه قراءة الطلبات
+      allow read: if isAuthenticated();
+
+      // الإنشاء: المستخدم المسجل فقط، ويجب أن يكون هو صاحب الطلب (customerId)
+      allow create: if isAuthenticated()
+        && request.resource.data.customerId == request.auth.uid;
+
+      // التعديل: أي مستخدم مسجل (العميل والفني كلاهما يحتاجان للتعديل)
+      allow update: if isAuthenticated();
+
+      // الحذف: صاحب الطلب أو المشرف فقط
+      allow delete: if isAuthenticated()
+        && (resource.data.customerId == request.auth.uid || isAdmin());
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // مجموعة التصنيفات - Categories Collection
+    // ═══════════════════════════════════════════════════════════════
+    // الحقول: name, icon, description, createdAt
+    match /categories/{categoryId} {
+      // القراءة: متاحة للجميع (عامة) بدون تسجيل دخول
+      allow read: if true;
+
+      // الكتابة (إنشاء/تعديل/حذف): المشرف فقط
+      allow write: if isAuthenticated() && isAdmin();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // مجموعة المنشورات - Posts Collection
+    // ═══════════════════════════════════════════════════════════════
+    // الحقول: userId, customerName, userRole, category,
+    //         description, createdAt
+    match /posts/{postId} {
+      // القراءة: متاحة للجميع (عامة)
+      allow read: if true;
+
+      // الإنشاء: أي مستخدم مسجل دخوله
+      allow create: if isAuthenticated();
+
+      // التعديل والحذف: صاحب المنشور أو المشرف فقط
+      allow update, delete: if isAuthenticated()
+        && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // مجموعة التعليقات - Comments Collection
+    // ═══════════════════════════════════════════════════════════════
+    // الحقول: postId, userId, userName, userRole, text, createdAt
+    match /comments/{commentId} {
+      // القراءة: متاحة للجميع (عامة)
+      allow read: if true;
+
+      // الإنشاء: أي مستخدم مسجل دخوله
+      allow create: if isAuthenticated();
+
+      // التعديل والحذف: صاحب التعليق أو المشرف فقط
+      allow update, delete: if isAuthenticated()
+        && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // مجموعة التقييمات - Reviews Collection
+    // ═══════════════════════════════════════════════════════════════
+    // الحقول: technicianId, customerId, requestId, rating,
+    //         comment, createdAt
+    match /reviews/{reviewId} {
+      // القراءة: متاحة للجميع (عامة)
+      allow read: if true;
+
+      // الإنشاء: أي مستخدم مسجل دخوله
+      allow create: if isAuthenticated();
+
+      // التعديل والحذف: المشرف فقط (لمنع التلاعب بالتقييمات)
+      allow update, delete: if isAdmin();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // مجموعة الباقات - Packages Collection
+    // ═══════════════════════════════════════════════════════════════
+    // الحقول: name, category, price, duration, description, icon, isActive
+    match /packages/{packageId} {
+      // القراءة: متاحة للجميع (العملاء يحتاجون رؤية الباقات)
+      allow read: if true;
+
+      // الكتابة (إنشاء/تعديل/حذف): المسجلين فقط (الأدمن مفضل لكن نسمح للمسجلين للـ auto-seed)
+      allow write: if isAuthenticated();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // رسائل الشات - Messages Subcollection (under requests)
+    // ═══════════════════════════════════════════════════════════════
+    // المسار: requests/{requestId}/messages/{messageId}
+    // الحقول: senderId, senderName, senderRole, text, imageUrl, createdAt
+    match /requests/{requestId}/messages/{messageId} {
+      // القراءة والكتابة: أي مستخدم مسجل دخوله (العميل والفني)
+      allow read, write: if isAuthenticated();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // مجموعة الفنيين - Technicians Collection (إذا موجودة)
+    // ═══════════════════════════════════════════════════════════════
+    match /technicians/{techId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(techId) || isAdmin();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // إشعارات الفنيين - Notifications Subcollection
+    // ═══════════════════════════════════════════════════════════════
+    match /notifications/{userId}/items/{itemId} {
+      allow read: if isAuthenticated() && isOwner(userId);
+      allow write: if isAuthenticated();
+    }
+  }
+}

@@ -1,0 +1,411 @@
+<!-- customer/request-service.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <script>var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')};</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا | طلب فني</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb' }, dark: { bg: '#0f172a', card: '#1e293b', border: '#334155', text: '#f8fafc', muted: '#94a3b8' } }, fontFamily: { cairo: ['Cairo', 'sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="../css/style.css">
+
+    <!-- ===== Polish Styles ===== -->
+    <style>
+        /* ---------- 1. Progress Stepper ---------- */
+        .stepper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 1.5rem;
+            direction: ltr;
+        }
+        .stepper-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .stepper-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 14px;
+            color: #94a3b8;
+            background: #e2e8f0;
+            border: 3px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        .stepper-circle.active {
+            background: linear-gradient(135deg, #2563eb, #3b82f6, #60a5fa);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
+            animation: stepBounceIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes stepBounceIn {
+            0% { transform: scale(0.7); opacity: 0.5; }
+            60% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .stepper-label {
+            margin-top: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+        .stepper-label.active {
+            color: #2563eb;
+        }
+        .stepper-line {
+            flex: 1;
+            height: 3px;
+            min-width: 40px;
+            max-width: 70px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin-bottom: 22px;
+        }
+        .stepper-line.done {
+            background: linear-gradient(90deg, #2563eb, #60a5fa);
+        }
+
+        .dark .stepper-circle {
+            background: #334155;
+            border-color: #334155;
+            color: #64748b;
+        }
+        .dark .stepper-circle.active {
+            background: linear-gradient(135deg, #2563eb, #3b82f6, #60a5fa);
+            color: #fff;
+            border-color: transparent;
+        }
+        .dark .stepper-label { color: #64748b; }
+        .dark .stepper-label.active { color: #60a5fa; }
+        .dark .stepper-line { background: #334155; }
+        .dark .stepper-line.done { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+
+        /* ---------- 2. Toggle Buttons ---------- */
+        #toggle-open.toggle-active,
+        #toggle-package.toggle-active {
+            background: linear-gradient(135deg, #2563eb, #3b82f6, #60a5fa) !important;
+            color: #fff !important;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+        }
+        #toggle-open.toggle-inactive,
+        #toggle-package.toggle-inactive {
+            background: transparent !important;
+            color: #6b7280 !important;
+            border: 1px solid #e5e7eb;
+        }
+        .dark #toggle-open.toggle-inactive,
+        .dark #toggle-package.toggle-inactive {
+            border-color: #334155;
+            color: #94a3b8 !important;
+        }
+
+        /* ---------- 3. AI Shimmer Button ---------- */
+        @keyframes shimmer-sweep {
+            0%   { transform: translateX(150%); }
+            100% { transform: translateX(-150%); }
+        }
+        #analyze-btn {
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+        #analyze-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(
+                105deg,
+                transparent 30%,
+                rgba(255,255,255,0.35) 50%,
+                transparent 70%
+            );
+            animation: shimmer-sweep 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+        #analyze-btn:hover {
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25), 0 6px 20px rgba(245, 158, 11, 0.3);
+        }
+
+        /* ---------- 4. Image Upload - Marching Ants Border ---------- */
+        @keyframes marching {
+            to { stroke-dashoffset: -24; }
+        }
+        .upload-area {
+            position: relative;
+            border: none !important;
+        }
+        .upload-area .marching-border {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .upload-area .marching-border rect {
+            fill: none;
+            stroke: #cbd5e1;
+            stroke-width: 2.5;
+            stroke-dasharray: 8 6;
+            rx: 16;
+            ry: 16;
+            animation: marching 0.8s linear infinite;
+            transition: stroke 0.3s, filter 0.3s;
+        }
+        .upload-area:hover .marching-border rect {
+            stroke: #3b82f6;
+            filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.45));
+        }
+        .dark .upload-area .marching-border rect {
+            stroke: #475569;
+        }
+        .dark .upload-area:hover .marching-border rect {
+            stroke: #60a5fa;
+            filter: drop-shadow(0 0 6px rgba(96, 165, 250, 0.4));
+        }
+        /* Upload hover overlay */
+        .upload-area::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 1rem;
+            background: linear-gradient(to bottom, transparent, rgba(59, 130, 246, 0.04));
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .upload-area:hover::after {
+            opacity: 1;
+        }
+        /* Camera emoji pulse on hover */
+        .upload-area:hover #placeholder span:first-child {
+            animation: cameraPulse 1s ease-in-out infinite;
+        }
+        @keyframes cameraPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        /* ---------- 5. GPS Info Box - Dot Grid Background ---------- */
+        .gps-box {
+            position: relative;
+            overflow: hidden;
+        }
+        .gps-box::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.35;
+            background-image: url("data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='1' fill='%233b82f6'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .gps-box > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ---------- 6. Form Card Accent Border ---------- */
+        .form-card {
+            position: relative;
+            overflow: hidden;
+        }
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #2563eb, #60a5fa, #818cf8, #60a5fa, #2563eb);
+            background-size: 200% 100%;
+            animation: accentSlide 3s ease-in-out infinite;
+        }
+        @keyframes accentSlide {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* ---------- 7. Submit Button Pulse Ring ---------- */
+        @keyframes submitPulse {
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(37, 99, 235, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+        #submit-request-btn {
+            animation: submitPulse 2.5s ease-in-out infinite;
+            font-size: 1rem;
+        }
+        #submit-request-btn:hover {
+            animation: none;
+            box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+        }
+
+        /* ---------- 8. Page Entrance ---------- */
+        .stepper {
+            animation: fadeSlideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+        }
+        .form-card {
+            animation: fadeSlideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+        }
+        @keyframes fadeSlideDown {
+            from { opacity: 0; transform: translateY(-12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+
+    <script>
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById('preview-image');
+            const placeholder = document.getElementById('placeholder');
+            const aiSection = document.getElementById('ai-diagnosis-section');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                    if (aiSection) aiSection.classList.remove('hidden');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-dark-bg text-gray-900 dark:text-dark-text flex flex-col min-h-screen transition-colors">
+
+    <!-- شريط علوي بسيط للرجوع -->
+    <header class="bg-white dark:bg-dark-card shadow-sm dark:border-b dark:border-dark-border py-4 px-4 sticky top-0 z-40">
+        <div class="max-w-lg mx-auto flex items-center gap-4">
+            <a href="dashboard.html" class="w-10 h-10 bg-gray-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-xl hover:bg-gray-200 dark:hover:bg-slate-700 transition">&rarr;</a>
+            <h1 class="text-xl font-black">طلب <span id="category-title" class="text-primary-600 dark:text-primary-400"></span></h1>
+        </div>
+    </header>
+
+    <main class="flex-grow p-4 max-w-lg mx-auto w-full slide-up">
+
+        <!-- ===== Progress Stepper ===== -->
+        <div class="stepper">
+            <div class="stepper-step">
+                <div class="stepper-circle active">1</div>
+                <span class="stepper-label active">اختر الخدمة</span>
+            </div>
+            <div class="stepper-line done"></div>
+            <div class="stepper-step">
+                <div class="stepper-circle">2</div>
+                <span class="stepper-label">وصف المشكلة</span>
+            </div>
+            <div class="stepper-line"></div>
+            <div class="stepper-step">
+                <div class="stepper-circle">3</div>
+                <span class="stepper-label">تأكيد الطلب</span>
+            </div>
+        </div>
+
+        <div class="form-card bg-white dark:bg-dark-card p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-dark-border">
+            <p class="text-sm text-gray-500 dark:text-dark-muted font-bold mb-6">اشرح المشكلة ليتمكن الفني من فهمها وإحضار الأدوات المناسبة قبل الوصول.</p>
+
+            <form id="request-form" class="space-y-6">
+                <!-- Toggle: باقة جاهزة أو وصف مفتوح -->
+                <div class="flex rounded-xl overflow-hidden border border-gray-200 dark:border-dark-border">
+                    <button type="button" id="toggle-open" class="flex-1 py-3 text-sm font-black text-center transition-all toggle-active">
+                        📝 وصف مشكلة مفتوحة
+                    </button>
+                    <button type="button" id="toggle-package" class="flex-1 py-3 text-sm font-black text-center transition-all toggle-inactive">
+                        اختر باقة جاهزة 📦
+                    </button>
+                </div>
+
+                <!-- قسم الباقات الجاهزة (مخفي بشكل افتراضي) -->
+                <div id="packages-section" class="hidden space-y-3">
+                    <p class="text-xs text-gray-500 dark:text-dark-muted font-bold">اختر الخدمة المناسبة بسعر ثابت:</p>
+                    <div id="packages-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- سيتم الملء من JS -->
+                        <div class="text-center py-6 text-gray-400 dark:text-dark-muted font-bold text-sm animate-pulse">جاري تحميل الباقات...</div>
+                    </div>
+                </div>
+
+                <!-- قسم الوصف المفتوح (يظهر بشكل افتراضي) -->
+                <div id="open-section">
+                <div>
+                    <label class="block text-gray-700 dark:text-gray-300 font-bold mb-2 text-sm">وصف العطل (اختياري)</label>
+                    <textarea id="issue-desc" rows="3" class="w-full px-4 py-3 border border-gray-200 dark:border-dark-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 bg-gray-50 dark:bg-slate-800 dark:text-white transition-all resize-none" placeholder="مثال: حنفية المطبخ بتسرب مياه..."></textarea>
+                </div>
+
+                <label class="upload-area block relative w-full h-40 rounded-2xl overflow-hidden hover:border-primary-500 transition cursor-pointer group bg-gray-50 dark:bg-slate-800/50">
+                    <svg class="marching-border" preserveAspectRatio="none"><rect x="1" y="1" width="calc(100% - 2px)" height="calc(100% - 2px)"/></svg>
+                    <input type="file" id="issue-image" accept="image/*" class="hidden" onchange="previewImage(event)">
+                    <div id="placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
+                        <span class="text-3xl mb-2 opacity-50 group-hover:opacity-100 transition">📸</span>
+                        <span class="text-gray-700 dark:text-gray-300 font-bold mb-1">صورة للعطل (اختياري)</span>
+                        <span class="text-xs text-gray-400">تساعد الفني في إحضار قطع الغيار</span>
+                        <span class="text-[10px] text-gray-300 dark:text-gray-600 mt-1">اسحب الصورة هنا أو اضغط</span>
+                    </div>
+                    <img id="preview-image" class="hidden absolute inset-0 w-full h-full object-cover">
+                </label>
+
+                <!-- AI Diagnosis Section — يظهر دائماً -->
+                <div id="ai-diagnosis-section" class="space-y-3">
+                    <button type="button" id="analyze-btn" class="w-full py-3 px-4 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg hover:shadow-xl" style="background: linear-gradient(135deg, #f59e0b, #d97706, #b45309);">
+                        🤖 تشخيص ذكي بالذكاء الاصطناعي (صورة أو نص)
+                    </button>
+
+                    <div id="ai-loading" class="hidden bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 p-4 rounded-2xl flex items-center justify-center gap-3">
+                        <svg class="animate-spin h-5 w-5 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                        </svg>
+                        <span class="text-amber-700 dark:text-amber-300 font-bold text-sm">جاري التحليل بالذكاء الاصطناعي...</span>
+                    </div>
+
+                    <div id="ai-results" class="hidden bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700 p-4 rounded-2xl">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="text-lg">🧠</span>
+                            <h3 class="font-black text-emerald-700 dark:text-emerald-400 text-sm">نتيجة التشخيص الذكي</h3>
+                        </div>
+                        <div id="ai-results-text" class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap"></div>
+                    </div>
+                </div>
+
+                </div><!-- /open-section -->
+
+                <div class="gps-box bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800 p-4 rounded-2xl flex items-start gap-3">
+                    <div class="text-primary-600 dark:text-primary-400 text-2xl drop-shadow-sm">📍</div>
+                    <p class="text-xs text-primary-800 dark:text-primary-300 font-bold leading-relaxed mt-1">
+                        سيقوم التطبيق تلقائياً بتحديد موقعك عبر الـ GPS للبحث عن أقرب فني متاح في محيطك لتوفير وقتك.
+                    </p>
+                </div>
+
+                <button type="submit" id="submit-request-btn" class="w-full bg-primary-600 text-white font-black py-4 rounded-xl hover:bg-primary-700 active:scale-95 transition shadow-lg hover:shadow-primary-500/40">
+                    تحديد موقعي والبحث عن فني 📡
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <script type="module" src="js/request-service.js"></script>
+    <script type="module" src="../js/shared.js"></script>
+</body>
+</html>

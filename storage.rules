@@ -1,0 +1,68 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ═══════════════════════════════════════════════════════════════
+    // دوال مساعدة - Helper Functions
+    // ═══════════════════════════════════════════════════════════════
+
+    // التحقق من تسجيل الدخول
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // التحقق من حجم الملف (الحد الأقصى 10 ميجابايت)
+    function isValidSize() {
+      return request.resource.size < 10 * 1024 * 1024;
+    }
+
+    // التحقق من نوع الملف (صور فقط)
+    function isImageFile() {
+      return request.resource.contentType.matches('image/.*');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // مجلد الطلبات - Requests Folder
+    // ═══════════════════════════════════════════════════════════════
+    // صور الطلبات: يمكن للمستخدم رفع ملفات تبدأ باسم المعرف الخاص به
+    // مثال: requests/USER_UID_timestamp.jpg
+    match /requests/{fileName} {
+      // القراءة: أي مستخدم مسجل دخوله
+      allow read: if isAuthenticated();
+
+      // الكتابة: المستخدم المسجل فقط، بشرط أن اسم الملف يبدأ بمعرفه
+      // والملف لا يتجاوز 10 ميجابايت
+      allow write: if isAuthenticated()
+        && fileName.matches(request.auth.uid + '_.*')
+        && isValidSize();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // مجلد التحقق - Verifications Folder
+    // ═══════════════════════════════════════════════════════════════
+    // مستندات التحقق من الهوية للفنيين
+    match /verifications/{userId}/{allPaths=**} {
+      // القراءة: أي مستخدم مسجل دخوله
+      allow read: if isAuthenticated();
+
+      // الكتابة: صاحب المجلد فقط، بشرط ألا يتجاوز الملف 10 ميجابايت
+      allow write: if isAuthenticated()
+        && request.auth.uid == userId
+        && isValidSize();
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // مجلد صور المستخدمين - Profile Pictures
+    // ═══════════════════════════════════════════════════════════════
+    match /profiles/{userId}/{allPaths=**} {
+      // القراءة: أي مستخدم مسجل دخوله
+      allow read: if isAuthenticated();
+
+      // الكتابة: صاحب الملف فقط، صور فقط، حد أقصى 10 ميجابايت
+      allow write: if isAuthenticated()
+        && request.auth.uid == userId
+        && isImageFile()
+        && isValidSize();
+    }
+  }
+}

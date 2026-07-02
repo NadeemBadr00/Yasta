@@ -1,0 +1,350 @@
+<!-- technician/dashboard.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <script>var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')};</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا PRO | لوحة التحكم</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eef7ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        dark: { bg: '#020617', card: '#0f172a', border: '#1e293b', text: '#f8fafc', muted: '#94a3b8' }
+                    },
+                    fontFamily: { cairo: ['Cairo', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <script>
+        // منع الوميض عند التحميل
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; overflow: hidden; }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
+        .sidebar-link-active {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%);
+            border-right: 4px solid #3b82f6;
+            color: #3b82f6 !important;
+        }
+        .premium-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+        .dark .premium-card { border: 1px solid rgba(51, 65, 85, 0.3); }
+        .premium-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.2); }
+        @media (max-width: 1024px) {
+            #sidebar { display: none; }
+            #mobile-menu-btn { display: flex !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-dark-bg text-slate-800 dark:text-slate-200 h-screen flex transition-colors duration-300">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-72 h-screen bg-white dark:bg-dark-card border-l border-slate-200 dark:border-dark-border flex flex-col z-50 shrink-0">
+        <div class="p-8">
+            <div class="flex items-center gap-3 mb-12">
+                <div class="w-11 h-11 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center shadow-lg shadow-primary-500/30 text-white text-xl font-black italic">ي</div>
+                <div>
+                    <h1 class="text-xl font-black dark:text-white leading-none tracking-tight">يسطا PRO</h1>
+                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1 block">بوابة الفنيين</span>
+                </div>
+            </div>
+
+            <nav class="space-y-2">
+                <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-4 px-4">القائمة الرئيسية</p>
+                <a href="dashboard.html" class="sidebar-link-active flex items-center gap-4 px-4 py-4 rounded-2xl font-bold transition-all">
+                    <span class="text-xl">📊</span> الطلبات
+                </a>
+                <a href="active-job.html" class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-primary-500 font-bold transition-all">
+                    <span class="text-xl">🛠️</span> المهام النشطة
+                </a>
+                <a href="reviews.html" class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-primary-500 font-bold transition-all">
+                    <span class="text-xl">⭐</span> التقييمات
+                </a>
+                <a href="wallet.html" class="flex items-center gap-4 px-4 py-4 rounded-2xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-primary-500 font-bold transition-all">
+                    <span class="text-xl">💳</span> المحفظة
+                </a>
+            </nav>
+        </div>
+        <div class="mt-auto p-6 border-t dark:border-slate-800">
+            <button id="sidebar-logout-btn" class="w-full flex items-center justify-center gap-3 px-4 py-4 rounded-2xl bg-red-50 dark:bg-red-500/10 text-red-600 font-black hover:bg-red-100 transition-all text-sm">🚪 تسجيل الخروج</button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+        <!-- Top Navbar -->
+        <header class="h-20 md:h-24 bg-white/80 dark:bg-dark-card/80 backdrop-blur-md border-b border-slate-200 dark:border-dark-border px-4 md:px-10 flex items-center justify-between shrink-0 z-40">
+            <div class="flex items-center gap-4 md:gap-6">
+                <!-- Mobile menu button -->
+                <button id="mobile-menu-btn" class="hidden p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-xl">☰</button>
+                <h2 class="text-lg md:text-2xl font-black dark:text-white" id="greeting-text">أهلاً 👋</h2>
+                <div class="h-6 w-[1px] bg-slate-200 dark:bg-slate-700 hidden md:block"></div>
+                <p class="text-xs text-gray-400 font-bold hidden md:block tracking-wide uppercase">Enterprise Technical Support</p>
+            </div>
+            
+            <div class="flex items-center gap-3 md:gap-6">
+                <!-- زر متاح للعمل — CRITICAL TOGGLE -->
+                <label class="flex items-center cursor-pointer bg-gray-100 dark:bg-slate-800 rounded-full p-1 pr-3">
+                    <div class="ml-2 md:ml-3 text-[10px] md:text-xs font-bold text-gray-500 dark:text-dark-muted" id="status-text">غير متاح</div>
+                    <div class="relative">
+                        <input type="checkbox" id="online-toggle" class="sr-only">
+                        <div class="block bg-gray-300 dark:bg-slate-600 w-12 h-7 rounded-full transition-colors duration-300" id="toggle-bg"></div>
+                        <div class="dot absolute left-1 top-1 bg-white w-5 h-5 rounded-full transition-transform duration-300 transform translate-x-0 shadow-sm" id="toggle-dot"></div>
+                    </div>
+                </label>
+
+                <button id="theme-toggle" class="p-3 md:p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-yellow-400 flex items-center justify-center border border-slate-200 dark:border-slate-700 shadow-sm hover:scale-110 transition-all">
+                    <span id="theme-icon" class="text-lg md:text-xl">🌙</span>
+                </button>
+
+                <!-- Notifications Bell -->
+                <div class="relative cursor-pointer" id="notif-trigger">
+                    <span class="text-xl md:text-2xl">🔔</span>
+                    <span class="absolute -top-1 -left-1 w-5 h-5 bg-rose-500 border-2 border-white dark:border-dark-card rounded-full animate-pulse flex items-center justify-center text-[9px] text-white font-black" id="notif-count">0</span>
+                </div>
+
+                <!-- User Profile -->
+                <div class="flex items-center gap-3 md:gap-4 border-r pr-4 md:pr-6 border-slate-200 dark:border-slate-700">
+                    <div class="text-left hidden sm:block">
+                        <p class="text-sm font-black dark:text-white leading-none" id="user-name-display">الفني</p>
+                        <p class="text-[10px] font-bold mt-1 uppercase" id="user-status-badge">
+                            <span class="text-gray-400">غير متصل</span>
+                        </p>
+                    </div>
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-primary-600 text-white flex items-center justify-center font-black text-lg md:text-xl shadow-lg shadow-primary-500/30 border-2 border-white dark:border-dark-card" id="user-avatar">?</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable Content Area -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-10 custom-scroll space-y-8 md:space-y-10 bg-slate-50/30 dark:bg-transparent">
+
+            <!-- رسالة غير متاح -->
+            <div id="offline-msg" class="bg-yellow-50 dark:bg-yellow-900/20 border-r-4 border-yellow-500 text-yellow-800 dark:text-yellow-500 p-5 rounded-xl text-center shadow-sm font-bold">
+                أنت الآن "غير متاح" 😴<br>
+                <span class="text-sm font-normal">قم بتفعيل الزر بالأعلى لتلقي طلبات العملاء في محيطك.</span>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
+                <div class="premium-card bg-white dark:bg-dark-card p-4 md:p-6 rounded-[2rem] md:rounded-[2.5rem] shadow-sm flex flex-col justify-between h-36 md:h-44">
+                    <div class="flex justify-between items-start"><span class="p-2.5 md:p-3 bg-blue-50 dark:bg-blue-900/30 rounded-2xl text-xl md:text-2xl">📅</span><span class="text-[9px] md:text-xs font-black text-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 px-2 md:px-3 py-1 rounded-full" id="today-badge">اليوم</span></div>
+                    <div><p class="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">مهام اليوم</p><h3 class="text-2xl md:text-3xl font-black dark:text-white" id="stat-today">--</h3></div>
+                </div>
+                <div class="premium-card bg-white dark:bg-dark-card p-4 md:p-6 rounded-[2rem] md:rounded-[2.5rem] shadow-sm flex flex-col justify-between h-36 md:h-44 border-b-4 border-emerald-500">
+                    <div class="flex justify-between items-start"><span class="p-2.5 md:p-3 bg-emerald-50 dark:bg-emerald-900/30 rounded-2xl text-xl md:text-2xl text-emerald-600">✅</span></div>
+                    <div><p class="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">مكتملة</p><h3 class="text-2xl md:text-3xl font-black dark:text-white" id="stat-completed">--</h3></div>
+                </div>
+                <div class="premium-card bg-white dark:bg-dark-card p-4 md:p-6 rounded-[2rem] md:rounded-[2.5rem] shadow-sm flex flex-col justify-between h-36 md:h-44 border-b-4 border-amber-500">
+                    <div class="flex justify-between items-start"><span class="p-2.5 md:p-3 bg-amber-50 dark:bg-amber-900/30 rounded-2xl text-xl md:text-2xl text-amber-600">⏳</span></div>
+                    <div><p class="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">قيد المعالجة</p><h3 class="text-2xl md:text-3xl font-black dark:text-white" id="stat-inprogress">--</h3></div>
+                </div>
+                <div class="premium-card bg-white dark:bg-dark-card p-4 md:p-6 rounded-[2rem] md:rounded-[2.5rem] shadow-sm flex flex-col justify-between h-36 md:h-44 border-b-4 border-rose-500">
+                    <div class="flex justify-between items-start"><span class="p-2.5 md:p-3 bg-rose-50 dark:bg-rose-900/30 rounded-2xl text-xl md:text-2xl text-rose-600 animate-pulse">🚨</span></div>
+                    <div><p class="text-[9px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">حالات طارئة</p><h3 class="text-2xl md:text-3xl font-black dark:text-white" id="stat-emergency">--</h3></div>
+                </div>
+                <div class="premium-card bg-primary-600 p-4 md:p-6 rounded-[2rem] md:rounded-[2.5rem] shadow-xl shadow-primary-500/30 text-white flex flex-col justify-between h-36 md:h-44 col-span-2 sm:col-span-1">
+                    <div class="flex justify-between items-start"><span class="p-2.5 md:p-3 bg-white/20 rounded-2xl text-xl md:text-2xl">💰</span></div>
+                    <div><p class="text-[9px] md:text-[10px] font-black text-white/60 uppercase tracking-widest leading-none">الأرباح</p><h3 class="text-2xl md:text-3xl font-black italic mt-1" id="stat-earnings">-- <span class="text-sm">ج.م</span></h3></div>
+                </div>
+            </div>
+
+            <!-- Dashboard Analytics Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+                <!-- Productivity Chart -->
+                <div class="lg:col-span-2 bg-white dark:bg-dark-card p-6 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] shadow-sm border border-slate-100 dark:border-slate-800">
+                    <div class="flex justify-between items-center mb-6 md:mb-10 border-b dark:border-slate-800 pb-4 md:pb-6">
+                        <h3 class="text-lg md:text-xl font-black">تحليل الإنتاجية الأسبوعي 📈</h3>
+                        <div class="flex gap-2">
+                            <span class="flex items-center gap-1.5 text-[10px] font-bold text-gray-400"><span class="w-2.5 h-2.5 rounded-full bg-primary-600"></span> المهام</span>
+                            <span class="flex items-center gap-1.5 text-[10px] font-bold text-gray-400"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> مكتملة</span>
+                        </div>
+                    </div>
+                    <div class="h-60 md:h-80 w-full"><canvas id="mainDashboardChart"></canvas></div>
+                </div>
+
+                <!-- Radar / Mini Widget -->
+                <div class="bg-white dark:bg-dark-card p-6 md:p-10 rounded-[2.5rem] md:rounded-[3.5rem] shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col">
+                    <h3 class="text-lg md:text-xl font-black mb-6 md:mb-8 flex items-center justify-between">الرادار المباشر 🛰️ <span class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></span></h3>
+                    <div id="mini-map-placeholder" class="flex-1 bg-slate-50 dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-[2rem] md:rounded-[2.5rem] flex flex-col items-center justify-center text-center p-6 md:p-8 relative overflow-hidden">
+                        <div class="z-10">
+                            <p class="text-4xl md:text-5xl mb-4 md:mb-6 transform hover:scale-110 transition cursor-default">📍</p>
+                            <p class="text-xs font-black dark:text-white uppercase mb-2">حالة الاستعداد</p>
+                            <p class="text-[11px] font-bold text-gray-400 leading-relaxed italic px-2 md:px-4" id="radar-status">فعّل وضع "متاح للعمل" لبدء استقبال الطلبات</p>
+                        </div>
+                        <div class="absolute inset-0 bg-primary-500/5 animate-pulse"></div>
+                    </div>
+                    <button onclick="location.href='active-job.html'" class="w-full mt-6 md:mt-8 py-4 md:py-5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl md:rounded-3xl font-black text-sm shadow-xl shadow-primary-500/30 transition-all active:scale-95">فتح المهمة الحالية 🚀</button>
+                </div>
+            </div>
+
+            <!-- Incoming Requests Container (preserved from original) -->
+            <div id="requests-container" class="space-y-4 hidden">
+                <!-- سيتم إضافة الطلبات أو السكيليتون هنا برمجياً -->
+            </div>
+
+            <!-- Recent Jobs Table -->
+            <div class="bg-white dark:bg-dark-card p-6 md:p-12 rounded-[2.5rem] md:rounded-[3.5rem] shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+                <div class="flex justify-between items-center mb-6 md:mb-10">
+                    <h3 class="text-xl md:text-2xl font-black">سجل المهام الأخيرة 📋</h3>
+                    <div class="flex gap-4">
+                        <button class="bg-slate-50 dark:bg-slate-800 px-4 md:px-6 py-2 md:py-2.5 rounded-xl font-black text-xs text-slate-500">الفلترة 🔍</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right border-collapse">
+                        <thead>
+                            <tr class="text-gray-400 text-xs font-black uppercase tracking-[0.2em] border-b dark:border-slate-800 pb-6">
+                                <th class="pb-4 md:pb-6 px-3 md:px-4">رقم المهمة</th>
+                                <th class="pb-4 md:pb-6 px-3 md:px-4">اسم العميل</th>
+                                <th class="pb-4 md:pb-6 px-3 md:px-4 hidden md:table-cell">الموقع</th>
+                                <th class="pb-4 md:pb-6 px-3 md:px-4">الحالة</th>
+                                <th class="pb-4 md:pb-6 px-3 md:px-4 hidden sm:table-cell">التكلفة</th>
+                                <th class="pb-4 md:pb-6 px-3 md:px-4 text-left hidden sm:table-cell">الأولوية</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-tasks-body" class="divide-y divide-slate-50 dark:divide-slate-800 font-bold text-sm">
+                            <tr><td colspan="6" class="text-center py-10 text-gray-400 text-sm">جاري التحميل...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="pb-20"></div>
+        </div>
+    </main>
+
+    <!-- Notification Panel Slide-out -->
+    <div id="notif-panel" class="hidden fixed left-4 md:left-8 top-24 md:top-28 w-80 md:w-96 bg-white dark:bg-dark-card shadow-2xl rounded-[2.5rem] p-6 md:p-8 border dark:border-slate-800 z-[100]">
+        <div class="flex justify-between items-center mb-6">
+            <h4 class="font-black text-lg">الإشعارات 🔔</h4>
+            <button id="close-notif" class="text-xl hover:text-red-500 transition">✕</button>
+        </div>
+        <div class="space-y-4 max-h-[400px] overflow-y-auto custom-scroll" id="notif-list">
+            <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl text-center">
+                <p class="text-xs text-gray-400 font-bold">لا توجد إشعارات جديدة</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- بانر طلب إذن الإشعارات -->
+    <div id="notif-permission-banner" class="fixed bottom-0 left-0 right-0 z-[200] transform translate-y-full transition-transform duration-500 hidden">
+        <div class="mx-4 mb-4 md:mx-auto md:max-w-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 md:p-5 rounded-2xl shadow-2xl shadow-blue-500/30 flex items-center gap-4">
+            <span class="text-3xl shrink-0">🔔</span>
+            <div class="flex-1">
+                <p class="font-black text-sm leading-tight">فعّل الإشعارات</p>
+                <p class="text-xs text-blue-100 mt-1 font-bold">ليصلك تنبيه فوري عند وصول طلب جديد من العملاء</p>
+            </div>
+            <button id="enable-notif-btn" class="bg-white text-blue-600 px-4 py-2 rounded-xl font-black text-xs shrink-0 hover:bg-blue-50 transition-all active:scale-95 shadow">
+                تفعيل
+            </button>
+            <button id="dismiss-notif-btn" class="text-white/60 hover:text-white text-lg transition shrink-0">✕</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/tech-dashboard.js"></script>
+
+    <!-- FCM Notifications Setup -->
+    <script type="module">
+        import { requestNotificationPermission, onMessageReceived } from '../js/notifications.js';
+        import { auth } from '../js/firebase-config.js';
+        import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+
+        // انتظار تسجيل الدخول قبل طلب إذن الإشعارات
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) return;
+
+            const banner = document.getElementById('notif-permission-banner');
+            const enableBtn = document.getElementById('enable-notif-btn');
+            const dismissBtn = document.getElementById('dismiss-notif-btn');
+
+            // التحقق من حالة الإذن الحالية
+            if ('Notification' in window && Notification.permission === 'default') {
+                // عرض البانر بعد ثانيتين
+                setTimeout(() => {
+                    banner.classList.remove('hidden');
+                    requestAnimationFrame(() => {
+                        banner.style.transform = 'translateY(0)';
+                    });
+                }, 2000);
+            } else if ('Notification' in window && Notification.permission === 'granted') {
+                // الإذن ممنوح بالفعل — تسجيل الـ Token
+                await requestNotificationPermission();
+            }
+
+            // زر تفعيل الإشعارات
+            if (enableBtn) {
+                enableBtn.addEventListener('click', async () => {
+                    enableBtn.innerText = 'جاري...';
+                    enableBtn.disabled = true;
+                    const token = await requestNotificationPermission();
+                    // إخفاء البانر
+                    banner.style.transform = 'translateY(100%)';
+                    setTimeout(() => banner.classList.add('hidden'), 500);
+                });
+            }
+
+            // زر تجاهل البانر
+            if (dismissBtn) {
+                dismissBtn.addEventListener('click', () => {
+                    banner.style.transform = 'translateY(100%)';
+                    setTimeout(() => banner.classList.add('hidden'), 500);
+                });
+            }
+
+            // الاستماع للإشعارات أثناء فتح التطبيق
+            onMessageReceived((notification) => {
+                console.log('📩 إشعار جديد:', notification);
+                // يمكن هنا تحديث عداد الإشعارات في لوحة التحكم
+                const countEl = document.getElementById('notif-count');
+                if (countEl) {
+                    const current = parseInt(countEl.textContent) || 0;
+                    countEl.textContent = current + 1;
+                }
+            });
+        });
+
+        // ===== Notification Panel Open/Close =====
+        const notifTrigger = document.getElementById('notif-trigger');
+        const notifPanel = document.getElementById('notif-panel');
+        const closeNotif = document.getElementById('close-notif');
+
+        if (notifTrigger && notifPanel) {
+            notifTrigger.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notifPanel.classList.toggle('hidden');
+            });
+        }
+        if (closeNotif && notifPanel) {
+            closeNotif.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notifPanel.classList.add('hidden');
+            });
+        }
+        document.addEventListener('click', (e) => {
+            if (notifPanel && !notifPanel.classList.contains('hidden') &&
+                !notifPanel.contains(e.target) && 
+                !notifTrigger.contains(e.target)) {
+                notifPanel.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

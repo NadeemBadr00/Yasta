@@ -1,0 +1,685 @@
+<!-- register.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <script>var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')};</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا | Yasta - إنشاء حساب</title>
+    <meta name="description" content="أنشئ حسابك في يسطا - انضم كعميل أو فني محترف">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a' },
+                        dark: { bg: '#0b1120', card: '#141c2e', border: '#1e2d45', text: '#f8fafc', muted: '#8b9dc3' }
+                    },
+                    fontFamily: { cairo: ['Cairo', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* ===== Animated Background ===== */
+        .auth-bg {
+            background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 50%, #f5f0ff 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .dark .auth-bg {
+            background: linear-gradient(135deg, #0b1120 0%, #101829 50%, #0d1526 100%);
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: floatOrb 12s ease-in-out infinite alternate;
+        }
+        .dark .orb { opacity: 0.15; }
+        .orb-1 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, #818cf8, #6366f1);
+            top: -10%; right: -5%;
+        }
+        .orb-2 {
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, #38bdf8, #0ea5e9);
+            bottom: -10%; left: -8%;
+            animation-delay: -4s;
+        }
+        .orb-3 {
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, #a78bfa, #8b5cf6);
+            top: 50%; left: 30%;
+            animation-delay: -8s;
+        }
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -20px) scale(1.05); }
+            66% { transform: translate(-20px, 15px) scale(0.95); }
+            100% { transform: translate(10px, -10px) scale(1.02); }
+        }
+
+        /* ===== Glass Card ===== */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass-card {
+            background: rgba(20, 28, 46, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* ===== Floating Label ===== */
+        .float-group { position: relative; }
+        .float-group input,
+        .float-group select {
+            padding-top: 1.5rem;
+            padding-bottom: 0.5rem;
+        }
+        .float-label {
+            position: absolute;
+            top: 50%;
+            right: 1rem;
+            transform: translateY(-50%);
+            font-size: 0.9rem;
+            color: #94a3b8;
+            pointer-events: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-origin: right center;
+        }
+        .float-group input:focus ~ .float-label,
+        .float-group input:not(:placeholder-shown) ~ .float-label {
+            top: 0.65rem;
+            transform: translateY(0) scale(0.8);
+            color: #3b82f6;
+            font-weight: 700;
+        }
+        .dark .float-group input:focus ~ .float-label,
+        .dark .float-group input:not(:placeholder-shown) ~ .float-label {
+            color: #60a5fa;
+        }
+        /* For select - always float since it has a value */
+        .float-group select ~ .float-label {
+            top: 0.65rem;
+            transform: translateY(0) scale(0.8);
+            color: #94a3b8;
+            font-weight: 700;
+        }
+        .float-group select:focus ~ .float-label {
+            color: #3b82f6;
+        }
+
+        /* ===== Gradient Button ===== */
+        .btn-gradient {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .btn-gradient::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        .btn-gradient:hover::before { left: 100%; }
+        .btn-gradient:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px -5px rgba(37, 99, 235, 0.4);
+        }
+        .btn-gradient:active { transform: scale(0.97); }
+
+        .btn-loading .btn-text { visibility: hidden; }
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 24px; height: 24px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            top: 50%; left: 50%;
+            margin-top: -12px; margin-left: -12px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ===== Decorative Side ===== */
+        .deco-side {
+            background: linear-gradient(160deg, #1e40af 0%, #4f46e5 40%, #7c3aed 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .deco-side::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(56, 189, 248, 0.3), transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.4), transparent 50%);
+        }
+        .deco-pattern {
+            position: absolute; inset: 0;
+            background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+        .float-shape {
+            position: absolute;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.15);
+            animation: floatShape 15s ease-in-out infinite;
+        }
+        .float-shape-1 { width: 100px; height: 100px; top: 15%; right: 10%; }
+        .float-shape-2 { width: 60px; height: 60px; bottom: 20%; left: 15%; animation-delay: -5s; }
+        .float-shape-3 { width: 80px; height: 80px; top: 55%; right: 30%; animation-delay: -10s; border-radius: 30%; }
+        @keyframes floatShape {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* ===== Role Cards ===== */
+        .role-card {
+            position: relative;
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 1.25rem;
+            padding: 1.25rem 1rem;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255,255,255,0.5);
+            text-align: center;
+        }
+        .dark .role-card {
+            background: rgba(255,255,255,0.03);
+        }
+        .role-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -4px rgba(0,0,0,0.1);
+        }
+        .role-card.active {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.08) 0%, rgba(124, 58, 237, 0.08) 100%);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+        .dark .role-card.active {
+            border-color: #60a5fa;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.15) 0%, rgba(124, 58, 237, 0.15) 100%);
+            box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.1);
+        }
+        .role-card .role-icon {
+            width: 56px; height: 56px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            font-size: 1.75rem;
+            transition: transform 0.3s;
+        }
+        .role-card.active .role-icon {
+            transform: scale(1.1);
+        }
+        .role-card .check-badge {
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            font-size: 12px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+        }
+        .role-card.active .check-badge {
+            display: flex;
+        }
+
+        /* ===== Password Strength ===== */
+        .strength-bar {
+            height: 4px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .dark .strength-bar { background: #1e2d45; }
+        .strength-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: all 0.4s ease;
+            width: 0;
+        }
+
+        /* ===== Tech fields slide ===== */
+        .tech-fields-enter {
+            animation: slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .tech-fields-exit {
+            animation: slideUp2 0.3s ease forwards;
+        }
+        @keyframes slideDown {
+            from { max-height: 0; opacity: 0; transform: translateY(-10px); }
+            to { max-height: 500px; opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp2 {
+            from { max-height: 500px; opacity: 1; transform: translateY(0); }
+            to { max-height: 0; opacity: 0; transform: translateY(-10px); }
+        }
+
+        /* ===== Custom checkbox ===== */
+        .custom-check {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px; height: 20px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+        .custom-check:checked {
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-color: transparent;
+        }
+        .custom-check:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .dark .custom-check { border-color: #334155; }
+
+        /* ===== Password toggle ===== */
+        .pwd-toggle {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #94a3b8;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            padding: 0.25rem;
+        }
+        .pwd-toggle:hover { color: #3b82f6; }
+
+        /* ===== Phone prefix ===== */
+        .phone-prefix {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #64748b;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .dark .phone-prefix { color: #8b9dc3; }
+
+        /* ===== Logo pulse ===== */
+        @keyframes logoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .logo-animated { animation: logoPulse 3s ease-in-out infinite; }
+
+        /* ===== Page entry ===== */
+        @keyframes pageSlideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .page-enter { animation: pageSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* Error slide-in */
+        .error-slide {
+            animation: slideInRight 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(30px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* ===== Referral Code ===== */
+        .referral-input-group {
+            position: relative;
+        }
+        .referral-badge {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 900;
+            padding: 2px 8px;
+            border-radius: 999px;
+        }
+    </style>
+</head>
+<body class="auth-bg min-h-screen font-cairo transition-colors duration-300">
+
+    <!-- Animated Orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- Theme Toggle -->
+    <div class="fixed top-5 left-5 z-50">
+        <button id="theme-toggle" class="p-3 rounded-2xl glass-card shadow-lg text-gray-600 dark:text-gray-300 hover:scale-110 transition-all duration-300">
+            <span id="theme-toggle-icon" class="text-xl leading-none">🌙</span>
+        </button>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="min-h-screen flex flex-col lg:flex-row">
+
+        <!-- ===== Decorative Side ===== -->
+        <div class="deco-side hidden lg:flex lg:w-[45%] xl:w-[50%] items-center justify-center p-12 relative">
+            <div class="deco-pattern"></div>
+            <div class="float-shape float-shape-1"></div>
+            <div class="float-shape float-shape-2"></div>
+            <div class="float-shape float-shape-3"></div>
+
+            <div class="relative z-10 text-center text-white max-w-md">
+                <div class="inline-flex items-center justify-center w-28 h-28 bg-white/10 backdrop-blur-sm rounded-3xl mb-8 border border-white/20 logo-animated">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-20 h-20">
+                        <path d="M 35 15 L 35 35 A 15 15 0 0 0 65 35 L 65 15" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" />
+                        <line x1="50" y1="50" x2="50" y2="60" stroke="currentColor" stroke-width="8" />
+                        <line x1="25" y1="55" x2="75" y2="55" stroke="currentColor" stroke-width="12" stroke-linecap="round" />
+                        <ellipse cx="50" cy="76" rx="14" ry="18" fill="none" stroke="currentColor" stroke-width="8" />
+                        <polygon points="50,46 58,50.5 58,59.5 50,64 42,59.5 42,50.5" fill="#fbbf24" />
+                        <circle cx="50" cy="55" r="4" fill="#60a5fa" />
+                    </svg>
+                </div>
+                <h2 class="text-4xl font-black mb-4 leading-tight">انضم إلى<br><span class="text-yellow-300">عائلة يسطا</span></h2>
+                <p class="text-white/70 text-lg leading-relaxed">سواء كنت عميل يبحث عن فني محترف،<br>أو فني يريد توسيع أعماله.</p>
+                
+                <!-- Features -->
+                <div class="mt-10 space-y-4 text-right">
+                    <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                        <div class="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center text-xl flex-shrink-0">✅</div>
+                        <div>
+                            <div class="font-bold text-sm">تسجيل مجاني بالكامل</div>
+                            <div class="text-white/50 text-xs">أنشئ حسابك في دقائق</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center text-xl flex-shrink-0">🔒</div>
+                        <div>
+                            <div class="font-bold text-sm">بياناتك في أمان</div>
+                            <div class="text-white/50 text-xs">حماية متقدمة لمعلوماتك</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+                        <div class="w-10 h-10 rounded-xl bg-yellow-500/20 flex items-center justify-center text-xl flex-shrink-0">🎁</div>
+                        <div>
+                            <div class="font-bold text-sm">برنامج الإحالة</div>
+                            <div class="text-white/50 text-xs">ادعُ أصدقاءك واكسب مكافآت</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Mobile Header ===== -->
+        <div class="lg:hidden deco-side py-8 px-6 text-center text-white relative">
+            <div class="deco-pattern"></div>
+            <div class="relative z-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl mb-3 border border-white/20 logo-animated">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10">
+                        <path d="M 35 15 L 35 35 A 15 15 0 0 0 65 35 L 65 15" fill="none" stroke="currentColor" stroke-width="8" stroke-linecap="round" />
+                        <line x1="50" y1="50" x2="50" y2="60" stroke="currentColor" stroke-width="8" />
+                        <line x1="25" y1="55" x2="75" y2="55" stroke="currentColor" stroke-width="12" stroke-linecap="round" />
+                        <ellipse cx="50" cy="76" rx="14" ry="18" fill="none" stroke="currentColor" stroke-width="8" />
+                        <polygon points="50,46 58,50.5 58,59.5 50,64 42,59.5 42,50.5" fill="#fbbf24" />
+                        <circle cx="50" cy="55" r="4" fill="#60a5fa" />
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-black">إنشاء حساب في <span class="text-yellow-300">يسطا</span></h1>
+                <p class="text-white/60 text-sm font-bold mt-1">انضم إلينا الآن</p>
+            </div>
+        </div>
+
+        <!-- ===== Form Side ===== -->
+        <div class="flex-1 flex items-center justify-center p-6 lg:p-12">
+            <div class="glass-card rounded-3xl shadow-2xl w-full max-w-lg p-8 lg:p-10 page-enter relative">
+
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-black text-gray-800 dark:text-white">إنشاء حساب جديد ✨</h2>
+                    <p class="text-gray-500 dark:text-dark-muted font-bold text-sm mt-2">اختر نوع حسابك وابدأ الآن</p>
+                </div>
+
+                <!-- Error Message Area -->
+                <div id="error-msg" class="hidden mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm font-bold error-slide"></div>
+
+                <form id="register-form" class="space-y-5">
+
+                    <!-- ===== Role Selector Cards ===== -->
+                    <div class="grid grid-cols-2 gap-4 mb-2">
+                        <label class="role-card active" id="role-customer-card">
+                            <input type="radio" name="role" value="customer" class="sr-only" checked>
+                            <div class="check-badge">✓</div>
+                            <div class="role-icon bg-blue-100 dark:bg-blue-900/30">
+                                🧑‍💼
+                            </div>
+                            <div class="font-black text-gray-800 dark:text-white text-sm">عميل</div>
+                            <div class="text-gray-400 dark:text-dark-muted text-xs mt-1">أحتاج خدمة فنية</div>
+                        </label>
+                        <label class="role-card" id="role-technician-card">
+                            <input type="radio" name="role" value="technician" class="sr-only">
+                            <div class="check-badge">✓</div>
+                            <div class="role-icon bg-emerald-100 dark:bg-emerald-900/30">
+                                🛠️
+                            </div>
+                            <div class="font-black text-gray-800 dark:text-white text-sm">فني</div>
+                            <div class="text-gray-400 dark:text-dark-muted text-xs mt-1">أقدم خدمات فنية</div>
+                        </label>
+                    </div>
+
+                    <!-- ===== Name ===== -->
+                    <div class="float-group">
+                        <input type="text" id="name" required placeholder=" "
+                            class="w-full px-4 py-3 border border-gray-200 dark:border-dark-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/60 dark:bg-white/5 dark:text-white transition-all text-sm">
+                        <span class="float-label">الاسم الرباعي</span>
+                    </div>
+
+                    <!-- ===== National ID ===== -->
+                    <div class="float-group">
+                        <input type="text" id="nationalId" pattern="[0-9]{14}" maxlength="14" required placeholder=" "
+                            class="w-full px-4 py-3 border border-gray-200 dark:border-dark-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/60 dark:bg-white/5 dark:text-white transition-all text-sm" dir="ltr" style="text-align: right;">
+                        <span class="float-label">الرقم القومي (14 رقم)</span>
+                    </div>
+
+                    <!-- ===== Phone ===== -->
+                    <div class="float-group relative">
+                        <input type="tel" id="phone" required placeholder=" "
+                            class="w-full px-4 py-3 border border-gray-200 dark:border-dark-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/60 dark:bg-white/5 dark:text-white transition-all text-sm ps-20" dir="ltr" style="text-align: right;">
+                        <span class="float-label" style="right: 5.5rem;">رقم الهاتف</span>
+                        <div class="phone-prefix">
+                            <span>🇪🇬</span>
+                            <span>+20</span>
+                        </div>
+                    </div>
+
+                    <!-- ===== Email ===== -->
+                    <div class="float-group">
+                        <input type="email" id="email" required placeholder=" " autocomplete="email"
+                            class="w-full px-4 py-3 border border-gray-200 dark:border-dark-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/60 dark:bg-white/5 dark:text-white transition-all text-sm" dir="ltr" style="text-align: right;">
+                        <span class="float-label">البريد الإلكتروني</span>
+                    </div>
+
+                    <!-- ===== Technician Fields (slide-down) ===== -->
+                    <div id="tech-skills-section" class="hidden overflow-hidden">
+                        <div class="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/10 dark:to-purple-900/10 p-5 rounded-2xl border border-blue-100 dark:border-dark-border space-y-4">
+                            <h3 class="font-black text-sm flex items-center gap-2">
+                                <span class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm">🧰</span>
+                                <span class="bg-gradient-to-l from-blue-600 to-purple-600 bg-clip-text text-transparent">تخصصك كفني</span>
+                            </h3>
+
+                            <div class="float-group">
+                                <select id="main-category" class="w-full px-4 py-3 border border-gray-200 dark:border-dark-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white/80 dark:bg-white/5 dark:text-white transition-all cursor-pointer text-sm">
+                                    <option value="" disabled selected>اختر التخصص...</option>
+                                </select>
+                                <span class="float-label">التخصص</span>
+                            </div>
+
+                            <div id="sub-category-container" class="hidden">
+                                <select id="sub-category" class="w-full px-4 py-3 border border-gray-200 dark:border-dark-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white/80 dark:bg-white/5 dark:text-white transition-all cursor-pointer text-sm">
+                                    <option value="" disabled selected>اختر التخصص...</option>
+                                </select>
+                            </div>
+
+                            <div id="custom-category-container" class="hidden">
+                                <input type="text" id="custom-category" class="w-full px-4 py-3 border border-gray-200 dark:border-dark-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white/80 dark:bg-white/5 dark:text-white transition-all text-sm" placeholder="مثال: تصليح طابعات...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== Referral Code ===== -->
+                    <div class="float-group referral-input-group">
+                        <input type="text" id="referral-code" placeholder=" "
+                            class="w-full px-4 py-3 border border-gray-200 dark:border-dark-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/60 dark:bg-white/5 dark:text-white transition-all text-sm ps-24">
+                        <span class="float-label">كود الإحالة (اختياري)</span>
+                        <div class="referral-badge">🎁 مكافأة</div>
+                    </div>
+
+                    <!-- ===== Password ===== -->
+                    <div>
+                        <div class="float-group relative">
+                            <input type="password" id="password" required minlength="6" placeholder=" " autocomplete="new-password"
+                                class="w-full px-4 py-3 border border-gray-200 dark:border-dark-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 bg-white/60 dark:bg-white/5 dark:text-white transition-all text-sm pe-4 ps-12">
+                            <span class="float-label">كلمة المرور</span>
+                            <button type="button" id="toggle-password" class="pwd-toggle" tabindex="-1">
+                                <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <!-- Password Strength -->
+                        <div class="mt-2">
+                            <div class="strength-bar">
+                                <div id="strength-fill" class="strength-fill"></div>
+                            </div>
+                            <p id="strength-text" class="text-xs font-bold mt-1 text-gray-400"></p>
+                        </div>
+                    </div>
+
+                    <!-- ===== Terms & Conditions ===== -->
+                    <label class="flex items-start gap-3 cursor-pointer group">
+                        <input type="checkbox" id="terms-check" required class="custom-check mt-0.5">
+                        <span class="text-sm text-gray-600 dark:text-gray-400 font-bold group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-relaxed">
+                            أوافق على <a href="#" class="text-blue-600 dark:text-blue-400 underline">شروط الاستخدام</a> و <a href="#" class="text-blue-600 dark:text-blue-400 underline">سياسة الخصوصية</a>
+                        </span>
+                    </label>
+
+                    <!-- ===== Submit ===== -->
+                    <button type="submit" id="submit-btn" class="btn-gradient w-full text-white font-bold py-3.5 rounded-2xl shadow-lg mt-2">
+                        <span class="btn-text">إنشاء الحساب</span>
+                    </button>
+                </form>
+
+                <!-- Login link -->
+                <p class="text-center mt-8 text-gray-500 dark:text-dark-muted text-sm font-bold">
+                    لديك حساب بالفعل؟
+                    <a href="login.html" class="bg-gradient-to-l from-blue-600 to-purple-600 bg-clip-text text-transparent hover:underline font-black">تسجيل الدخول</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inline scripts for UI interactions -->
+    <script>
+        // ===== Role Card Selection =====
+        const roleCards = document.querySelectorAll('.role-card');
+        roleCards.forEach(card => {
+            card.addEventListener('click', () => {
+                roleCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+            });
+        });
+
+        // ===== Password Toggle =====
+        document.getElementById('toggle-password').addEventListener('click', function() {
+            const pwd = document.getElementById('password');
+            const icon = document.getElementById('eye-icon');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>';
+            } else {
+                pwd.type = 'password';
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
+            }
+        });
+
+        // ===== Password Strength Indicator =====
+        document.getElementById('password').addEventListener('input', function() {
+            const val = this.value;
+            const fill = document.getElementById('strength-fill');
+            const text = document.getElementById('strength-text');
+            let strength = 0;
+            if (val.length >= 6) strength++;
+            if (val.length >= 10) strength++;
+            if (/[A-Z]/.test(val)) strength++;
+            if (/[0-9]/.test(val)) strength++;
+            if (/[^A-Za-z0-9]/.test(val)) strength++;
+
+            const levels = [
+                { w: '0%', c: '', t: '' },
+                { w: '20%', c: '#ef4444', t: 'ضعيفة جداً' },
+                { w: '40%', c: '#f97316', t: 'ضعيفة' },
+                { w: '60%', c: '#eab308', t: 'متوسطة' },
+                { w: '80%', c: '#22c55e', t: 'قوية' },
+                { w: '100%', c: '#10b981', t: 'قوية جداً 💪' }
+            ];
+
+            fill.style.width = levels[strength].w;
+            fill.style.background = levels[strength].c;
+            text.textContent = levels[strength].t;
+            text.style.color = levels[strength].c;
+        });
+
+        // ===== Technician Fields Slide Animation =====
+        const techSection = document.getElementById('tech-skills-section');
+        const roleRadiosUI = document.querySelectorAll('input[name="role"]');
+        roleRadiosUI.forEach(radio => {
+            radio.addEventListener('change', () => {
+                if (radio.value === 'technician' && radio.checked) {
+                    techSection.classList.remove('hidden');
+                    techSection.classList.remove('tech-fields-exit');
+                    techSection.classList.add('tech-fields-enter');
+                } else if (radio.value === 'customer' && radio.checked) {
+                    techSection.classList.add('tech-fields-exit');
+                    techSection.classList.remove('tech-fields-enter');
+                    setTimeout(() => techSection.classList.add('hidden'), 300);
+                }
+            });
+        });
+    </script>
+
+    <script type="module" src="js/register.js"></script>
+    <script type="module" src="js/shared.js"></script>
+</body>
+</html>

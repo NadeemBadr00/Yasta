@@ -1,0 +1,343 @@
+<!-- admin/dashboard.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <script>var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')};</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا | لوحة الإدارة الذكية</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Shared Styles -->
+    <link rel="stylesheet" href="../css/style.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f7ff', 100: '#e0effe', 200: '#bae0fd', 300: '#7cc7fb',
+                            400: '#38acf8', 500: '#0e91e9', 600: '#0274ca', 700: '#035ca4',
+                            800: '#074e87', 900: '#0c4270'
+                        },
+                        surface: {
+                            light: '#f8fafc',
+                            dark: '#020617',
+                            cardLight: '#ffffff',
+                            cardDark: '#0f172a'
+                        }
+                    },
+                    fontFamily: { cairo: ['Cairo', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Professional Scrollbar --- */
+        .custom-scroll {
+            scrollbar-width: thin;
+            scrollbar-color: #0e91e9 transparent;
+        }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: #0e91e9;
+            border-radius: 20px;
+        }
+        .dark .custom-scroll::-webkit-scrollbar-thumb { background-color: #1e293b; }
+
+        /* --- Glass Header --- */
+        .glass-header {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 2px solid rgba(14, 145, 233, 0.15);
+        }
+        .dark .glass-header {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border-bottom: 2px solid rgba(14, 145, 233, 0.25);
+        }
+
+        /* --- Sidebar Active Link --- */
+        .sidebar-link-active {
+            background: linear-gradient(90deg, rgba(14, 145, 233, 0.15) 0%, rgba(14, 145, 233, 0.08) 100%);
+            border-right: 5px solid #0e91e9;
+            color: #0e91e9 !important;
+            box-shadow: 0 8px 16px rgba(14, 145, 233, 0.1);
+        }
+
+        /* --- Premium Card Hover --- */
+        .premium-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        .dark .premium-card { border: 1px solid rgba(51, 65, 85, 0.4); }
+        .premium-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+            border-color: #0e91e9;
+        }
+
+        /* --- Stat Number Animation --- */
+        .stat-number { animation: fadeInScale 0.8s ease-out; }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="bg-surface-light dark:bg-surface-dark text-slate-800 dark:text-slate-200 flex">
+
+    <!-- ======== Sidebar ======== -->
+    <aside id="sidebar" class="fixed lg:static z-50 w-72 h-screen bg-white dark:bg-surface-cardDark border-l border-slate-200 dark:border-slate-800 transition-transform duration-300 translate-x-full lg:translate-x-0 flex flex-col shrink-0">
+        <div class="p-8">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center text-white text-lg font-black">ي</div>
+                <div>
+                    <h1 class="text-lg font-black dark:text-white leading-none">يـسـطـا</h1>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">إدارة المنصة</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="space-y-1.5">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 px-4">لوحة التحكم</p>
+                <!-- الإحصائيات المباشرة (Active) -->
+                <a href="dashboard.html" class="sidebar-link-active flex items-center gap-3.5 px-4 py-3 rounded-xl font-bold transition-all group">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    الإحصائيات المباشرة
+                </a>
+                <!-- الرادار المباشر -->
+                <a href="live-map.html" class="flex items-center gap-3.5 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-primary-500 font-bold transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                    الرادار المباشر
+                </a>
+                <!-- طلبات التوثيق -->
+                <a href="verify-users.html" class="flex items-center gap-3.5 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-primary-500 font-bold transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    طلبات التوثيق
+                </a>
+                <!-- إدارة التخصصات -->
+                <a href="categories.html" class="flex items-center gap-3.5 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-primary-500 font-bold transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    إدارة التخصصات
+                </a>
+                <!-- الباقات -->
+                <a href="packages.html" class="flex items-center gap-3.5 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:text-primary-500 font-bold transition-all">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                    📦 الباقات
+                </a>
+            </nav>
+        </div>
+        <!-- Logout -->
+        <div class="mt-auto p-6 border-t dark:border-slate-800">
+            <button id="logout-btn" class="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-500/10 text-red-600 font-black hover:bg-red-100 transition-all text-sm">
+                تسجيل الخروج
+            </button>
+        </div>
+    </aside>
+
+    <!-- ======== Main Content ======== -->
+    <main class="flex-1 flex flex-col h-screen min-w-0 bg-surface-light dark:bg-surface-dark overflow-hidden">
+        <!-- Glass Header -->
+        <header class="h-24 glass-header z-40 px-8 md:px-12 flex items-center justify-between shrink-0">
+            <div class="flex items-center gap-6">
+                <button id="mobile-toggle" class="lg:hidden p-2.5 text-slate-500 bg-slate-100 dark:bg-slate-800 rounded-xl">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h11"></path></svg>
+                </button>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-black text-slate-900 dark:text-white leading-none">نظرة عامة شاملة</h2>
+                    <p class="text-[10px] md:text-xs text-slate-400 font-bold mt-1 uppercase">إحصائيات فورية • تحديث مباشر</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-5">
+                <!-- Search -->
+                <div class="hidden md:flex items-center bg-slate-50 dark:bg-slate-800 rounded-xl px-4 py-2 gap-2 border border-slate-200 dark:border-slate-700">
+                    <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <input type="text" placeholder="بحث..." class="bg-transparent outline-none text-sm text-slate-600 dark:text-slate-300 w-32 lg:w-48 placeholder:text-slate-400">
+                </div>
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="p-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm">
+                    <span id="theme-icon" class="text-lg">☀️</span>
+                </button>
+                <!-- Admin Avatar -->
+                <div class="hidden sm:flex items-center gap-3 pr-5 border-l border-slate-200 dark:border-slate-700 pl-5">
+                    <div class="text-right">
+                        <p class="text-[9px] font-black text-slate-400 uppercase">المشرف العام</p>
+                        <p class="text-xs font-black dark:text-white">أحمد المحمدي</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-xl bg-primary-500 text-white flex items-center justify-center font-black text-sm">A</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Scrollable Content Area -->
+        <div class="flex-1 overflow-y-auto p-6 md:p-10 space-y-10 custom-scroll">
+
+            <!-- ===== Premium Stats Grid ===== -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Stat Card 1 — Customers -->
+                <div class="premium-card bg-white dark:bg-surface-cardDark p-7 rounded-[2rem]">
+                    <div class="flex items-center justify-between mb-5">
+                        <span class="p-2.5 bg-blue-50 dark:bg-blue-500/10 rounded-xl text-blue-600 text-lg">👥</span>
+                        <span class="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">+12%</span>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-black uppercase mb-1">إجمالي العملاء</p>
+                    <h3 id="stat-customers" class="stat-number text-3xl font-black text-slate-900 dark:text-white mb-2">0</h3>
+                    <div class="w-full h-1 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500 w-[92%]"></div>
+                    </div>
+                </div>
+                <!-- Stat Card 2 — Technicians -->
+                <div class="premium-card bg-white dark:bg-surface-cardDark p-7 rounded-[2rem]">
+                    <div class="flex items-center justify-between mb-5">
+                        <span class="p-2.5 bg-amber-50 dark:bg-amber-500/10 rounded-xl text-amber-600 text-lg">🔧</span>
+                        <span class="text-[10px] font-black text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg">موثق</span>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-black uppercase mb-1">فنيين نشطين</p>
+                    <h3 id="stat-techs" class="stat-number text-3xl font-black text-slate-900 dark:text-white mb-2">0</h3>
+                    <div class="w-full h-1 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-amber-500 w-[85%]"></div>
+                    </div>
+                </div>
+                <!-- Stat Card 3 — Completed Requests -->
+                <div class="premium-card bg-white dark:bg-surface-cardDark p-7 rounded-[2rem]">
+                    <div class="flex items-center justify-between mb-5">
+                        <span class="p-2.5 bg-emerald-50 dark:bg-emerald-500/10 rounded-xl text-emerald-600 text-lg">✓</span>
+                        <span class="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg">مكتمل</span>
+                    </div>
+                    <p class="text-slate-400 text-[10px] font-black uppercase mb-1">طلبات مكتملة</p>
+                    <h3 id="stat-requests" class="stat-number text-3xl font-black text-slate-900 dark:text-white mb-2">0</h3>
+                    <div class="w-full h-1 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-emerald-500 w-[95%]"></div>
+                    </div>
+                </div>
+                <!-- Stat Card 4 — Revenue (Gradient) -->
+                <div class="premium-card bg-primary-600 p-7 rounded-[2rem] text-white shadow-xl shadow-primary-500/20">
+                    <div class="flex items-center justify-between mb-5">
+                        <span class="p-2.5 bg-white/20 rounded-xl text-white text-lg">💰</span>
+                        <span class="text-[10px] font-black bg-white/20 px-2.5 py-1 rounded-lg">10%</span>
+                    </div>
+                    <p class="text-white/60 text-[10px] font-black uppercase mb-1">أرباح المنصة</p>
+                    <h3 id="stat-revenue" class="stat-number text-3xl font-black mb-2">0 ج.م</h3>
+                    <div class="w-full h-1 bg-white/20 rounded-full overflow-hidden">
+                        <div class="h-full bg-white w-[100%]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== Analytics & Top Technicians ===== -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Chart: Category Distribution -->
+                <div class="lg:col-span-2 premium-card bg-white dark:bg-surface-cardDark p-8 rounded-[2.5rem]">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h2 class="text-lg font-black text-slate-900 dark:text-white">توزيع الطلبات</h2>
+                            <p class="text-slate-500 text-[11px] font-semibold">إحصائيات الطلبات حسب الفئة</p>
+                        </div>
+                    </div>
+                    <div class="w-full h-[350px]">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Top Technicians Panel -->
+                <div class="premium-card bg-white dark:bg-surface-cardDark p-8 rounded-[2.5rem]">
+                    <h2 class="text-lg font-black text-slate-900 dark:text-white mb-6">⭐ أفضل الفنيين</h2>
+                    <div id="top-techs-list" class="space-y-4">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== Recent Operations Table ===== -->
+            <div class="premium-card bg-white dark:bg-surface-cardDark p-8 rounded-[2.5rem] overflow-hidden">
+                <div class="flex items-center justify-between mb-6 pb-4 border-b dark:border-slate-800">
+                    <h2 class="text-lg font-black dark:text-white">أحدث العمليات</h2>
+                    <button class="text-primary-500 text-[11px] font-black">عرض التفاصيل ←</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead>
+                            <tr class="text-slate-400 font-black uppercase tracking-widest border-b dark:border-slate-800">
+                                <th class="pb-4 px-4">رقم العملية</th>
+                                <th class="pb-4 px-4">العميل</th>
+                                <th class="pb-4 px-4">الخدمة</th>
+                                <th class="pb-4 px-4 text-center">التكلفة</th>
+                                <th class="pb-4 px-4 text-left">الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-requests-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="pb-10"></div>
+        </div>
+    </main>
+
+    <!-- Sidebar Overlay (Mobile) -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden"></div>
+
+    <!-- External Scripts (Modular Architecture) -->
+    <script type="module" src="js/admin-dashboard.js"></script>
+    <script type="module" src="../js/shared.js"></script>
+    <script>
+        // ===== UI Helpers =====
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+        const mobileToggle = document.getElementById('mobile-toggle');
+
+        const updateThemeUI = () => {
+            const isDark = document.documentElement.classList.contains('dark');
+            themeIcon.innerText = isDark ? '🌙' : '☀️';
+            localStorage.theme = isDark ? 'dark' : 'light';
+        };
+
+        // Init dark mode from localStorage or system preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+        updateThemeUI();
+
+        themeToggle.onclick = () => {
+            document.documentElement.classList.toggle('dark');
+            updateThemeUI();
+            // Re-render chart on theme switch
+            if (window.myChart) {
+                window.myChart.destroy();
+                if (typeof window.loadDashboard === 'function') window.loadDashboard();
+            }
+        };
+
+        // Mobile sidebar toggle
+        mobileToggle.onclick = () => {
+            sidebar.classList.remove('translate-x-full');
+            overlay.classList.remove('hidden');
+        };
+        overlay.onclick = () => {
+            sidebar.classList.add('translate-x-full');
+            overlay.classList.add('hidden');
+        };
+    </script>
+</body>
+</html>

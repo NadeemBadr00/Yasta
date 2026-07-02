@@ -1,0 +1,291 @@
+<!-- customer/checkout-rating.html -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <script>var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')};</script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يسطا | الفاتورة والتقييم</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class', theme: { extend: { colors: { primary: { 500: '#3b82f6', 600: '#2563eb' }, dark: { bg: '#0f172a', card: '#1e293b', border: '#334155' } }, fontFamily: { cairo: ['Cairo', 'sans-serif'] } } } }
+    </script>
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .rating { display: flex; flex-direction: row-reverse; justify-content: center; gap: 0.5rem; }
+        .rating input { display: none; }
+        .rating label { cursor: pointer; font-size: 3rem; color: #cbd5e1; transition: transform 0.2s, color 0.2s; }
+        .rating input:checked ~ label { color: #f59e0b; transform: scale(1.1); }
+        .rating label:hover, .rating label:hover ~ label { color: #f59e0b; transform: scale(1.1); }
+        .dark .rating label { color: #334155; }
+        .dark .rating input:checked ~ label, .dark .rating label:hover, .dark .rating label:hover ~ label { color: #fbbf24; }
+
+        /* Payment Method Cards */
+        .pay-card {
+            position: relative;
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 1rem;
+            padding: 1rem 1.25rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        .pay-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: inherit;
+            z-index: 0;
+        }
+        .pay-card > * { position: relative; z-index: 1; }
+
+        .pay-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+        .dark .pay-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+
+        .pay-card.selected {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15), 0 8px 25px rgba(59,130,246,0.1);
+        }
+        .dark .pay-card.selected {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2), 0 8px 25px rgba(96,165,250,0.08);
+        }
+        .pay-card.selected::before { opacity: 1; }
+
+        /* Cash card gradient */
+        .pay-card-cash { background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); }
+        .pay-card-cash::before { background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%); }
+        .dark .pay-card-cash { background: linear-gradient(135deg, #064e3b20 0%, #065f4620 100%); }
+        .dark .pay-card-cash::before { background: linear-gradient(135deg, #064e3b40 0%, #065f4640 100%); }
+
+        /* InstaPay card gradient */
+        .pay-card-instapay { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); }
+        .pay-card-instapay::before { background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%); }
+        .dark .pay-card-instapay { background: linear-gradient(135deg, #1e3a5f20 0%, #1e40af20 100%); }
+        .dark .pay-card-instapay::before { background: linear-gradient(135deg, #1e3a5f40 0%, #1e40af40 100%); }
+
+        /* Wallet card gradient */
+        .pay-card-wallet { background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); }
+        .pay-card-wallet::before { background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%); }
+        .dark .pay-card-wallet { background: linear-gradient(135deg, #78350f20 0%, #92400e20 100%); }
+        .dark .pay-card-wallet::before { background: linear-gradient(135deg, #78350f40 0%, #92400e40 100%); }
+
+        /* Radio dot */
+        .pay-radio {
+            width: 20px; height: 20px;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.25s;
+            flex-shrink: 0;
+        }
+        .pay-card.selected .pay-radio {
+            border-color: #3b82f6;
+        }
+        .dark .pay-card.selected .pay-radio {
+            border-color: #60a5fa;
+        }
+        .pay-radio-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #3b82f6;
+            transform: scale(0);
+            transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .dark .pay-radio-dot { background: #60a5fa; }
+        .pay-card.selected .pay-radio-dot { transform: scale(1); }
+
+        /* InstaPay details panel */
+        .instapay-details, .wallet-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s, margin 0.3s;
+            opacity: 0;
+            margin-top: 0;
+        }
+        .instapay-details.open, .wallet-details.open {
+            max-height: 500px;
+            opacity: 1;
+            margin-top: 1rem;
+        }
+
+        /* Upload area */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-area:hover { border-color: #3b82f6; background: rgba(59,130,246,0.04); }
+        .dark .upload-area { border-color: #334155; }
+        .dark .upload-area:hover { border-color: #60a5fa; background: rgba(96,165,250,0.06); }
+        .upload-area.has-file { border-color: #22c55e; border-style: solid; background: rgba(34,197,94,0.04); }
+        .dark .upload-area.has-file { border-color: #4ade80; background: rgba(74,222,128,0.06); }
+
+        /* Receipt preview */
+        .receipt-preview {
+            max-height: 180px;
+            border-radius: 0.75rem;
+            object-fit: cover;
+            margin-top: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        @keyframes checkPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+        .check-pulse { animation: checkPulse 0.6s ease-in-out; }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-dark-bg flex items-center justify-center min-h-screen p-4 transition-colors">
+
+    <div class="bg-white dark:bg-dark-card p-8 rounded-3xl shadow-2xl w-full max-w-md text-center slide-up border border-gray-100 dark:border-dark-border">
+        
+        <div class="w-24 h-24 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl drop-shadow-sm">
+            ✓
+        </div>
+        <h1 class="text-2xl font-black text-gray-800 dark:text-white mb-2">تم إنجاز العمل بنجاح!</h1>
+        <p class="text-gray-500 dark:text-dark-muted mb-6 font-bold text-sm" id="payment-subtitle">اختر طريقة الدفع المناسبة لك</p>
+
+        <!-- الفاتورة -->
+        <div class="bg-gray-50 dark:bg-slate-800 p-6 rounded-2xl border border-gray-200 dark:border-dark-border mb-8 shadow-inner">
+            <p class="text-xs font-bold text-gray-500 dark:text-dark-muted mb-3 uppercase tracking-wider">تفاصيل الفاتورة</p>
+            
+            <div class="space-y-2 mb-4">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-500 dark:text-dark-muted font-bold">إجمالي الخدمة</span>
+                    <span class="font-black text-gray-700 dark:text-gray-300" id="service-cost">---</span>
+                </div>
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-gray-500 dark:text-dark-muted font-bold">رسم المعاينة</span>
+                    <span class="font-bold text-emerald-600 dark:text-emerald-400">30 ج.م (مخصومة من الإجمالي)</span>
+                </div>
+                <div class="border-t border-gray-200 dark:border-dark-border pt-2 mt-2"></div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-700 dark:text-gray-200 font-black">المطلوب دفعه</span>
+                    <span class="text-2xl font-black text-primary-600 dark:text-primary-400" id="total-cost">---</span>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 text-xs font-bold px-3 py-2 rounded-xl text-center">
+                ℹ️ رسم المعاينة (30 ج.م) مشمول في الإجمالي ولا يُحسب بشكل منفصل
+            </div>
+        </div>
+
+        <!-- طريقة الدفع -->
+        <div class="mb-8 text-right">
+            <h3 class="font-black text-gray-800 dark:text-white mb-4 text-center">💳 اختر طريقة الدفع</h3>
+            
+            <div class="space-y-3" id="payment-methods">
+                <!-- نقدي -->
+                <div class="pay-card pay-card-cash selected" data-method="cash" id="pay-card-cash">
+                    <div class="flex items-center gap-3">
+                        <div class="pay-radio"><div class="pay-radio-dot"></div></div>
+                        <div class="text-3xl">💵</div>
+                        <div class="flex-1">
+                            <p class="font-black text-gray-800 dark:text-gray-100 text-sm">نقدي</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">ادفع للفني مباشرة</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- InstaPay -->
+                <div class="pay-card pay-card-instapay" data-method="instapay" id="pay-card-instapay">
+                    <div class="flex items-center gap-3">
+                        <div class="pay-radio"><div class="pay-radio-dot"></div></div>
+                        <div class="text-3xl">📱</div>
+                        <div class="flex-1">
+                            <p class="font-black text-gray-800 dark:text-gray-100 text-sm">InstaPay</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">حوّل المبلغ عبر InstaPay</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- InstaPay Details (hidden by default) -->
+                <div class="instapay-details" id="instapay-details">
+                    <div class="bg-blue-50 dark:bg-blue-900/20 p-5 rounded-2xl border border-blue-200 dark:border-blue-800/40 space-y-4">
+                        <!-- Transfer number -->
+                        <div class="flex items-center justify-between bg-white dark:bg-slate-800 p-3 rounded-xl border border-blue-100 dark:border-slate-700">
+                            <div>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold">حوّل إلى هذا الرقم</p>
+                                <p class="font-black text-lg text-blue-700 dark:text-blue-300 tracking-wider" dir="ltr">01012345678</p>
+                            </div>
+                            <button type="button" id="copy-number-btn" class="bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-blue-200 dark:hover:bg-blue-800/40 transition active:scale-95">
+                                📋 نسخ
+                            </button>
+                        </div>
+
+                        <!-- Note -->
+                        <div class="flex items-start gap-2 text-xs text-blue-700 dark:text-blue-400 font-bold">
+                            <span class="text-base mt-0.5">💡</span>
+                            <span>حوّل المبلغ ثم ارفع إيصال التحويل أدناه</span>
+                        </div>
+
+                        <!-- Upload receipt -->
+                        <div class="upload-area" id="upload-area" onclick="document.getElementById('receipt-input').click()">
+                            <input type="file" id="receipt-input" accept="image/*" class="hidden">
+                            <div id="upload-placeholder">
+                                <div class="text-4xl mb-2">📤</div>
+                                <p class="text-sm font-bold text-gray-600 dark:text-gray-300">اضغط لرفع إيصال التحويل</p>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">PNG, JPG حتى 5MB</p>
+                            </div>
+                            <div id="upload-success" class="hidden">
+                                <div class="text-4xl mb-2 check-pulse">✅</div>
+                                <p class="text-sm font-bold text-green-600 dark:text-green-400">تم رفع الإيصال بنجاح</p>
+                            </div>
+                        </div>
+                        <img id="receipt-preview" class="receipt-preview hidden w-full" alt="معاينة الإيصال">
+                    </div>
+                </div>
+
+                <!-- رصيد المحفظة -->
+                <div class="pay-card pay-card-wallet" data-method="wallet" id="pay-card-wallet">
+                    <div class="flex items-center gap-3">
+                        <div class="pay-radio"><div class="pay-radio-dot"></div></div>
+                        <div class="text-3xl">💰</div>
+                        <div class="flex-1">
+                            <p class="font-black text-gray-800 dark:text-gray-100 text-sm">رصيد المحفظة</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400" id="wallet-subtitle">ادفع من رصيدك (<span id="wallet-balance-label">0</span> ج.م)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wallet Details (hidden by default) -->
+                <div class="wallet-details" id="wallet-details">
+                    <div id="wallet-status-panel" class="p-4 rounded-2xl border">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- نموذج التقييم -->
+        <form id="rating-form">
+            <h3 class="font-black text-gray-800 dark:text-white mb-2">كيف تقيم تجربة الفني؟</h3>
+            <div class="rating mb-6">
+                <input type="radio" id="star5" name="rate" value="5" checked /><label for="star5">★</label>
+                <input type="radio" id="star4" name="rate" value="4" /><label for="star4">★</label>
+                <input type="radio" id="star3" name="rate" value="3" /><label for="star3">★</label>
+                <input type="radio" id="star2" name="rate" value="2" /><label for="star2">★</label>
+                <input type="radio" id="star1" name="rate" value="1" /><label for="star1">★</label>
+            </div>
+
+            <textarea id="review-text" rows="2" class="w-full px-4 py-3 border border-gray-200 dark:border-dark-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 mb-6 bg-gray-50 dark:bg-slate-800 dark:text-white resize-none" placeholder="أضف تعليقاً (اختياري)..."></textarea>
+
+            <button type="submit" id="submit-btn" class="w-full bg-primary-600 text-white font-black py-4 rounded-xl hover:bg-primary-700 active:scale-95 transition shadow-lg hover:shadow-primary-500/40">
+                تأكيد وإرسال التقييم
+            </button>
+        </form>
+    </div>
+
+    <script type="module" src="js/checkout-rating.js"></script>
+    <script type="module" src="../js/shared.js"></script>
+</body>
+</html>
