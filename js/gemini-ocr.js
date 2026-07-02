@@ -6,14 +6,14 @@
 // مفاتيح Gemini API (نفس المفاتيح المستخدمة في gemini-diagnosis.js)
 // ==========================================
 const GEMINI_API_KEYS = [
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE'
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY'
 ];
 
 // عداد لتدوير المفاتيح بالتساوي

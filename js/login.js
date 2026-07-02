@@ -1,7 +1,7 @@
 // js/login.js
 import { auth, db } from './firebase-config.js';
-import { signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { showToast, isUserAdmin } from './shared.js'; // تم إضافة isUserAdmin هنا
 
 // التحقق التلقائي: إذا كان الأدمن/المطور مسجل دخول بالفعل وفتح صفحة اللوجن، نعرض له لوحة التحكم مباشرة
@@ -75,6 +75,71 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
         loginBtn.innerText = 'تسجيل الدخول';
     }
 });
+
+// ==========================================
+// 1.5. تسجيل الدخول بـ Google
+// ==========================================
+const googleBtn = document.getElementById('google-login-btn');
+if (googleBtn) {
+    googleBtn.addEventListener('click', async () => {
+        googleBtn.disabled = true;
+        googleBtn.innerHTML = '<span class="animate-spin inline-block mr-2">⏳</span> جاري التسجيل...';
+        
+        try {
+            const provider = new GoogleAuthProvider();
+            provider.setCustomParameters({ prompt: 'select_account' });
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+
+            // Check if admin
+            if (user.email && isUserAdmin(user.email)) {
+                showToast('أهلاً بك في لوحة الإدارة!', 'success');
+                showSuperuserSelector();
+                return;
+            }
+
+            // Check if user exists in Firestore
+            const userDocRef = doc(db, "users", user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                showToast(`أهلاً ${user.displayName || 'بيك'}! 👋`, 'success');
+                setTimeout(() => {
+                    if (userData.role === 'technician') {
+                        window.location.href = 'technician/dashboard.html';
+                    } else {
+                        window.location.href = 'customer/dashboard.html';
+                    }
+                }, 1000);
+            } else {
+                // First time — create customer profile
+                await setDoc(userDocRef, {
+                    name: user.displayName || 'مستخدم يسطا',
+                    email: user.email,
+                    phone: user.phoneNumber || '',
+                    photoURL: user.photoURL || '',
+                    role: 'customer',
+                    createdAt: new Date().toISOString(),
+                    balance: 0,
+                    rating: 5.0,
+                    totalOrders: 0
+                });
+                showToast('تم إنشاء حسابك بنجاح! 🎉', 'success');
+                setTimeout(() => {
+                    window.location.href = 'customer/dashboard.html';
+                }, 1000);
+            }
+        } catch (error) {
+            console.error("Google Sign-In Error:", error);
+            if (error.code !== 'auth/popup-closed-by-user') {
+                showToast('حدث خطأ أثناء تسجيل الدخول بـ Google', 'error');
+            }
+            googleBtn.disabled = false;
+            googleBtn.innerHTML = '<img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5"> تسجيل الدخول بـ Google';
+        }
+    });
+}
 
 // ==========================================
 // 2. منطق إعادة تعيين كلمة المرور (Forgot Password)

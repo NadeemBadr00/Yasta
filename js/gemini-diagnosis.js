@@ -6,14 +6,14 @@
 // مفاتيح Gemini API (مع تدوير تلقائي للتوزيع)
 // ==========================================
 const GEMINI_API_KEYS = [
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE'
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY'
 ];
 
 // عداد لتدوير المفاتيح بالتساوي

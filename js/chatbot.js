@@ -6,14 +6,14 @@
 // مفاتيح Gemini API (نفس المفاتيح بالظبط)
 // ==========================================
 const API_KEYS = [
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE',
-    'YOUR_GEMINI_API_KEY_HERE'
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY',
+    'YOUR_API_KEY'
 ];
 
 let currentKeyIndex = Math.floor(Math.random() * API_KEYS.length);
